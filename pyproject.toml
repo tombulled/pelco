@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "pelco"
 version = "0.1.0"
-description = ""
+description = "Pelco-D Protocol Implementation"
 authors = ["p"]
 license = "MIT"
 readme = "README.md"
