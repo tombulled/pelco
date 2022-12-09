@@ -1,6 +1,7 @@
 import serial
 
 from .constants import *
+from .enums import PanSpeed, TiltSpeed, ZoomSpeed
 from .factory import SendCommandFactory
 from .models import GeneralResponse, SendCommandModel
 
@@ -52,12 +53,12 @@ class Pelco:
     def stop(self) -> GeneralResponse:
         return self.send_command(self.command_factory.stop())
 
-    def pan_right(self, speed: int = Speed.MEDIUM) -> GeneralResponse:
+    def pan_right(self, speed: int = PanSpeed.MEDIUM) -> GeneralResponse:
         assert 0 <= speed <= 0x3F
 
         return self.send_command(self.command_factory.pan_right(speed))
 
-    def pan_left(self, speed: int = Speed.MEDIUM) -> GeneralResponse:
+    def pan_left(self, speed: int = PanSpeed.MEDIUM) -> GeneralResponse:
         assert 0 <= speed <= 0x3F
 
         return self.send_command(self.command_factory.pan_left(speed))
@@ -70,12 +71,12 @@ class Pelco:
         else:
             return self.stop()
 
-    def tilt_up(self, speed: int = Speed.MEDIUM) -> GeneralResponse:
+    def tilt_up(self, speed: int = TiltSpeed.MEDIUM) -> GeneralResponse:
         assert 0 <= speed <= 0x3F
 
         return self.send_command(self.command_factory.tilt_up(speed))
 
-    def tilt_down(self, speed: int = Speed.MEDIUM) -> GeneralResponse:
+    def tilt_down(self, speed: int = TiltSpeed.MEDIUM) -> GeneralResponse:
         assert 0 <= speed <= 0x3F
 
         return self.send_command(self.command_factory.tilt_down(speed))
@@ -169,3 +170,6 @@ class Pelco:
 
     def run_pattern(self, pattern_id: int = 0x01) -> GeneralResponse:
         return self.send_command(self.command_factory.run_pattern(pattern_id))
+
+    def set_zoom_speed(self, zoom_speed: int = ZoomSpeed.MEDIUM) -> GeneralResponse:
+        return self.send_command(self.command_factory.set_zoom_speed(zoom_speed))

@@ -305,3 +305,16 @@ class SendCommandFactory:
             command_2=RUN_PATTERN,
             data_2=pattern_id,
         )
+
+    def set_zoom_speed(self, zoom_speed: int) -> SendCommandModel:
+        """
+        Set Zoom Speed (D_EC_ZOOM_SPEED)
+        """
+
+        assert MIN_ZOOM_SPEED <= zoom_speed <= MAX_ZOOM_SPEED
+
+        return SendCommandModel(
+            address=self.address,
+            command_2=SET_ZOOM_SPEED,
+            data_2=zoom_speed,
+        )
