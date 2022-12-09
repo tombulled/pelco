@@ -2,7 +2,7 @@
 name = "pelco"
 version = "0.1.0"
 description = "Pelco-D Protocol Implementation"
-authors = ["p"]
+authors = ["Tom Bulled <26026015+tombulled@users.noreply.github.com>"]
 license = "MIT"
 readme = "README.md"
 

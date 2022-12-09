@@ -5,6 +5,21 @@ import serial
 
 from .constants import SYNC
 
+MIN_ADDRESS: int = 0x01
+MAX_ADDRESS: int = 0xFF
+MIN_PRESET: int = 0x01
+MAX_PRESET: int = 0xFF  # NOTE: Although up to 0xff supported in spec, MIC only supports up to 0x64 (100 presets)
+MIN_TILT_SPEED: int = 0x00
+MAX_TILT_SPEED: int = 0x3F
+MIN_PAN_SPEED: int = 0x00
+MAX_PAN_SPEED: int = 0x3F
+MIN_AUX_ID: int = 0x01
+MAX_AUX_ID: int = 0x08
+MIN_ZONE_ID: int = 0x01
+MAX_ZONE_ID: int = 0xFF
+MIN_SCREEN_COLUMN: int = 0x00
+MAX_SCREEN_COLUMN: int = 0x27
+
 
 @dataclass(frozen=True, eq=True)
 class SendCommandModel:
@@ -89,6 +104,22 @@ class GeneralResponse:
         return model
 
 
+@dataclass(frozen=True, eq=True)
+class ExtendedResponse:
+    sync: int = SYNC  # SYNC
+    address: int = 0x00  # ADDR
+    response_1: int = 0x00  # RESP1
+    response_2: int = 0x00  # RESP2
+    data_1: int = 0x00  # DATA1
+    data_2: int = 0x00  # DATA2
+    checksum: int = 0x00  # CKSM
+
+
+@dataclass(frozen=True, eq=True)
+class QueryResponse:
+    ...
+
+
 # aka "CMND1"
 class ExtensionCommand(IntEnum):
     SENSE = 0b10000000
@@ -101,7 +132,7 @@ class ExtensionCommand(IntEnum):
     FOCUS_NEAR = 0b00000001
 
 
-# aka "CMND2"
+# aka "CMND2", "Basic Commands"
 class StandardCommand(IntEnum):
     ...
 
@@ -158,10 +189,33 @@ LEFT = 0b00000100
 RIGHT = 0b00000010
 RESERVED_0 = 0b00000001
 
+# Other commands
+SET_PRESET: int = 0x03
+CLEAR_PRESET: int = 0x05
+GO_TO_PRESET: int = 0x07
+# FLIP: int = 0x07
+# GO_TO_ZERO_PAN: int = 0x07
+DUMMY: int = 0x00
+REMOTE_RESET: int = 0x0F
+SET_ZONE_START: int = 0x11
+SET_ZONE_END: int = 0x13
+WRITE_CHARACTER_TO_SCREEN: int = 0x15
+ZONE_SCAN_ON: int = 0x1B
+ZONE_SCAN_OFF: int = 0x1D
+
+# Special Move Presets
+PRESET_FLIP: int = 0x21
+PRESET_GO_TO_ZERO_PAN: int = 0x22
+
 
 @dataclass
 class SendCommandFactory:
-    address: int = 0x01
+    address: int
+
+    def __init__(self, address: int = 0x01):
+        assert MIN_ADDRESS <= address <= MAX_ADDRESS
+
+        self.address = address
 
     def camera_on(self) -> SendCommandModel:
         return SendCommandModel(
@@ -205,7 +259,7 @@ class SendCommandFactory:
         )
 
     def pan_right(self, speed: int) -> SendCommandModel:
-        assert 0 <= speed <= 0x3F
+        assert MIN_PAN_SPEED <= speed <= MAX_PAN_SPEED
 
         return SendCommandModel(
             address=self.address,
@@ -214,7 +268,7 @@ class SendCommandFactory:
         )
 
     def pan_left(self, speed: int) -> SendCommandModel:
-        assert 0 <= speed <= 0x3F
+        assert MIN_PAN_SPEED <= speed <= MAX_PAN_SPEED
 
         return SendCommandModel(
             address=self.address,
@@ -223,7 +277,7 @@ class SendCommandFactory:
         )
 
     def tilt_up(self, speed: int) -> SendCommandModel:
-        assert 0 <= speed <= 0x3F
+        assert MIN_TILT_SPEED <= speed <= MAX_TILT_SPEED
 
         return SendCommandModel(
             address=self.address,
@@ -232,7 +286,7 @@ class SendCommandFactory:
         )
 
     def tilt_down(self, speed: int) -> SendCommandModel:
-        assert 0 <= speed <= 0x3F
+        assert MIN_TILT_SPEED <= speed <= MAX_TILT_SPEED
 
         return SendCommandModel(
             address=self.address,
@@ -264,6 +318,159 @@ class SendCommandFactory:
             command_1=FOCUS_NEAR,
         )
 
+    def set_preset(self, id: int) -> SendCommandModel:
+        """
+        Set Preset (D_EC_SET_PRESET)
+        """
+
+        assert MIN_PRESET < id <= MAX_PRESET
+
+        return SendCommandModel(
+            address=self.address,
+            command_2=SET_PRESET,
+            data_2=id,
+        )
+
+    def clear_preset(self, id: int) -> SendCommandModel:
+        """
+        Clear Preset (D_EC_CLEAR_PRESET)
+
+        Clears the requested preset's information from the camera system.
+        Pre-assigned presets may not be cleared.
+        It is not necessary to clear a preset before setting it.
+        """
+
+        assert MIN_PRESET < id <= MAX_PRESET
+
+        return SendCommandModel(
+            address=self.address,
+            command_2=CLEAR_PRESET,
+            data_2=id,
+        )
+
+    def go_to_preset(self, id: int) -> SendCommandModel:
+        """
+        Call Preset (D_EC_MOVE_PRESET)
+
+        Causes the camera unit to move, at preset speed, to the requested position.
+        """
+
+        assert MIN_PRESET < id <= MAX_PRESET
+
+        return SendCommandModel(
+            address=self.address,
+            command_2=GO_TO_PRESET,
+            data_2=id,
+        )
+
+    def flip_180_about(self) -> SendCommandModel:
+        return self.go_to_preset(PRESET_FLIP)
+
+    def go_to_zero_pan(self) -> SendCommandModel:
+        return self.go_to_preset(PRESET_GO_TO_ZERO_PAN)
+
+    def set_auxiliary(self, aux_id: int) -> SendCommandModel:
+        assert MIN_AUX_ID <= aux_id <= MAX_AUX_ID
+
+        return SendCommandModel(
+            address=self.address,
+            command_2=0x09,
+            data_2=aux_id,
+        )
+
+    def clear_auxiliary(self, aux_id: int) -> SendCommandModel:
+        assert MIN_AUX_ID <= aux_id <= MAX_AUX_ID
+
+        return SendCommandModel(
+            address=self.address,
+            command_2=0x0B,
+            data_2=aux_id,
+        )
+
+    def dummy(self):
+        """
+        Dummy (D_EC_DUMMY_1)
+        """
+
+        ...
+
+    def remote_reset(self) -> SendCommandModel:
+        """
+        Remote Reset (D_EC_RESET)
+
+        This command resets the system. It will take several seconds before the
+        system is ready to resume normal operation. This is the same as turning
+        the system off and then back on.
+        """
+
+        return SendCommandModel(
+            address=self.address,
+            command_2=REMOTE_RESET,
+        )
+
+    def set_zone_start(self, zone_id: int) -> SendCommandModel:
+        """
+        Set Zone Start (D_EC_ZONE_START)
+        """
+
+        assert MIN_ZONE_ID <= zone_id <= MAX_ZONE_ID
+
+        return SendCommandModel(
+            address=self.address,
+            command_2=SET_ZONE_START,
+            data_2=zone_id,
+        )
+
+    def set_zone_end(self, zone_id: int) -> SendCommandModel:
+        """
+        Set Zone End (D_EC_ZONE_END)
+        """
+
+        assert MIN_ZONE_ID <= zone_id <= MAX_ZONE_ID
+
+        return SendCommandModel(
+            address=self.address,
+            command_2=SET_ZONE_END,
+            data_2=zone_id,
+        )
+
+    def write_character_to_screen(
+        self, screen_column: int, ascii_char: int
+    ) -> SendCommandModel:
+        """
+        Write Character To Screen (D_EC_WRITE_CHAR)
+        """
+
+        assert MIN_SCREEN_COLUMN <= screen_column <= MAX_SCREEN_COLUMN
+        assert 0x00 <= ascii_char <= 0xFF
+
+        return SendCommandModel(
+            address=self.address,
+            command_2=WRITE_CHARACTER_TO_SCREEN,
+            data_1=screen_column,
+            data_2=ascii_char,
+        )
+
+    def zone_scan_on(self) -> SendCommandModel:
+        """
+        Zone Scan On (D_EC_ZONE_ON)
+        """
+
+        return SendCommandModel(
+            address=self.address,
+            command_2=ZONE_SCAN_ON,
+        )
+
+    def zone_scan_off(self) -> SendCommandModel:
+        """
+        Zone Scan Off (D_EC_ZONE_OFF)
+        """
+
+        return SendCommandModel(
+            address=self.address,
+            command_2=ZONE_SCAN_OFF,
+        )
+
 
 class Pelco:
     address: int
@@ -274,16 +481,16 @@ class Pelco:
         self.command_factory = SendCommandFactory(address=address)
         self.s = serial.Serial(port="/dev/ttyUSB0", baudrate=2400)
 
-    def send_standard_command(self, command: SendCommandModel, /) -> GeneralResponse:
+    def send_command(self, command: SendCommandModel, /) -> GeneralResponse:
         self.s.write(command.serialise())
 
         return GeneralResponse.deserialise(self.s.read(4))
 
     def camera_on(self) -> GeneralResponse:
-        return self.send_standard_command(self.command_factory.camera_on())
+        return self.send_command(self.command_factory.camera_on())
 
     def camera_off(self) -> GeneralResponse:
-        return self.send_standard_command(self.command_factory.camera_off())
+        return self.send_command(self.command_factory.camera_off())
 
     def camera(self, on: bool) -> GeneralResponse:
         if on:
@@ -292,10 +499,10 @@ class Pelco:
             return self.camera_off()
 
     def scan_auto(self) -> GeneralResponse:
-        return self.send_standard_command(self.command_factory.scan_auto())
+        return self.send_command(self.command_factory.scan_auto())
 
     def scan_manual(self) -> GeneralResponse:
-        return self.send_standard_command(self.command_factory.scan_manual())
+        return self.send_command(self.command_factory.scan_manual())
 
     def scan(self, auto: bool) -> GeneralResponse:
         if auto:
@@ -304,23 +511,23 @@ class Pelco:
             return self.scan_manual()
 
     def iris_close(self) -> GeneralResponse:
-        return self.send_standard_command(self.command_factory.iris_close())
+        return self.send_command(self.command_factory.iris_close())
 
     def iris_open(self) -> GeneralResponse:
-        return self.send_standard_command(self.command_factory.iris_open())
+        return self.send_command(self.command_factory.iris_open())
 
     def stop(self) -> GeneralResponse:
-        return self.send_standard_command(self.command_factory.stop())
+        return self.send_command(self.command_factory.stop())
 
     def pan_right(self, speed: int = Speed.MEDIUM) -> GeneralResponse:
         assert 0 <= speed <= 0x3F
 
-        return self.send_standard_command(self.command_factory.pan_right(speed))
+        return self.send_command(self.command_factory.pan_right(speed))
 
     def pan_left(self, speed: int = Speed.MEDIUM) -> GeneralResponse:
         assert 0 <= speed <= 0x3F
 
-        return self.send_standard_command(self.command_factory.pan_left(speed))
+        return self.send_command(self.command_factory.pan_left(speed))
 
     def pan(self, speed: int) -> GeneralResponse:
         if speed > 0:
@@ -333,12 +540,12 @@ class Pelco:
     def tilt_up(self, speed: int = Speed.MEDIUM) -> GeneralResponse:
         assert 0 <= speed <= 0x3F
 
-        return self.send_standard_command(self.command_factory.tilt_up(speed))
+        return self.send_command(self.command_factory.tilt_up(speed))
 
     def tilt_down(self, speed: int = Speed.MEDIUM) -> GeneralResponse:
         assert 0 <= speed <= 0x3F
 
-        return self.send_standard_command(self.command_factory.tilt_down(speed))
+        return self.send_command(self.command_factory.tilt_down(speed))
 
     def tilt(self, speed: int) -> GeneralResponse:
         if speed > 0:
@@ -349,10 +556,10 @@ class Pelco:
             return self.stop()
 
     def zoom_tele(self) -> GeneralResponse:
-        return self.send_standard_command(self.command_factory.zoom_tele())
+        return self.send_command(self.command_factory.zoom_tele())
 
     def zoom_wide(self) -> GeneralResponse:
-        return self.send_standard_command(self.command_factory.zoom_wide())
+        return self.send_command(self.command_factory.zoom_wide())
 
     def zoom(self, tele: bool = True) -> GeneralResponse:
         if tele:
@@ -361,13 +568,62 @@ class Pelco:
             return self.zoom_wide()
 
     def focus_far(self) -> GeneralResponse:
-        return self.send_standard_command(self.command_factory.focus_far())
+        return self.send_command(self.command_factory.focus_far())
 
     def focus_near(self) -> GeneralResponse:
-        return self.send_standard_command(self.command_factory.focus_near())
+        return self.send_command(self.command_factory.focus_near())
 
     def focus(self, near: bool = True) -> GeneralResponse:
         if near:
             return self.focus_near()
         else:
             return self.focus_far()
+
+    def set_preset(self, id: int = 0x01) -> GeneralResponse:
+        return self.send_command(self.command_factory.set_preset(id))
+
+    def clear_preset(self, id: int = 0x01) -> GeneralResponse:
+        return self.send_command(self.command_factory.clear_preset(id))
+
+    def go_to_preset(self, id: int = 0x01) -> GeneralResponse:
+        return self.send_command(self.command_factory.go_to_preset(id))
+
+    def flip_180_about(self) -> GeneralResponse:
+        return self.send_command(self.command_factory.flip_180_about())
+
+    def go_to_zero_pan(self) -> GeneralResponse:
+        return self.send_command(self.command_factory.go_to_zero_pan())
+
+    def set_auxiliary(self, aux_id: int) -> GeneralResponse:
+        return self.send_command(self.command_factory.set_auxiliary(aux_id))
+
+    def clear_auxiliary(self, aux_id: int) -> GeneralResponse:
+        return self.send_command(self.command_factory.clear_auxiliary(aux_id))
+
+    def dummy(self) -> GeneralResponse:
+        ...
+
+    def remote_reset(self) -> GeneralResponse:
+        return self.send_command(self.command_factory.remote_reset())
+
+    def set_zone_start(self, zone_id: int) -> GeneralResponse:
+        return self.send_command(self.command_factory.set_zone_start(zone_id))
+
+    def set_zone_end(self, zone_id: int) -> GeneralResponse:
+        return self.send_command(self.command_factory.set_zone_end(zone_id))
+
+    def write_character_to_screen(
+        self, screen_column: int, ascii_char: int
+    ) -> GeneralResponse:
+        return self.send_command(
+            self.command_factory.write_character_to_screen(screen_column, ascii_char)
+        )
+
+    # TODO: clear_screen
+    # TODO: alarm_acknowledge
+
+    def zone_scan_on(self) -> GeneralResponse:
+        return self.send_command(self.command_factory.zone_scan_on())
+
+    def zone_scan_off(self) -> GeneralResponse:
+        return self.send_command(self.command_factory.zone_scan_off())
