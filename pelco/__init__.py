@@ -19,6 +19,8 @@ MIN_ZONE_ID: int = 0x01
 MAX_ZONE_ID: int = 0xFF
 MIN_SCREEN_COLUMN: int = 0x00
 MAX_SCREEN_COLUMN: int = 0x27
+MIN_PATTERN_ID: int = 0x00
+MAX_PATTERN_ID: int = 0x08
 
 
 @dataclass(frozen=True, eq=True)
@@ -171,6 +173,13 @@ class Speed(IntEnum):
     VERY_FAST = 0x3F
 
 
+class ZoomSpeed(IntEnum):
+    SLOW: int = 0x00
+    MEDIUM: int = 0x01
+    FAST: int = 0x02
+    FASTEST: int = 0x03
+
+
 SENSE = 0b10000000
 RESERVED_6 = 0b01000000
 RESERVED_5 = 0b00100000
@@ -189,23 +198,86 @@ LEFT = 0b00000100
 RIGHT = 0b00000010
 RESERVED_0 = 0b00000001
 
-# Other commands
+# Extended Commands
 SET_PRESET: int = 0x03
 CLEAR_PRESET: int = 0x05
 GO_TO_PRESET: int = 0x07
-# FLIP: int = 0x07
-# GO_TO_ZERO_PAN: int = 0x07
-DUMMY: int = 0x00
+SET_AUXILIARY: int = 0x09
+CLEAR_AUXILIARY: int = 0x0B
+DUMMY: int = 0x0D
 REMOTE_RESET: int = 0x0F
 SET_ZONE_START: int = 0x11
 SET_ZONE_END: int = 0x13
 WRITE_CHARACTER_TO_SCREEN: int = 0x15
+CLEAR_SCREEN: int = 0x17
+ALARM_ACKNOWLEDGE: int = 0x19
 ZONE_SCAN_ON: int = 0x1B
 ZONE_SCAN_OFF: int = 0x1D
+SET_PATTERN_START: int = 0x1F
+SET_PATTERN_STOP: int = 0x21
+RUN_PATTERN: int = 0x23
+SET_ZOOM_SPEED: int = 0x25
+RESET_CAMERA_DEFAULTS: int = 0x29
+AUTO_FOCUS_MODE: int = 0x2B
+AUTO_IRIS_MODE: int = 0x2D
+AGC_MODE: int = 0x2F
+BACKLIGHT_COMPENSATION: int = 0x31
+AUTO_WHITE_BALANCE: int = 0x33
+ENABLE_DEVICE_PHASE_DELAY_MODE: int = 0x35
+SET_SHUTTER_SPEED: int = 0x37
+ADJUST_LINE_LOCK_PHASE_DELAY: int = 0x39
+ADJUST_WHITE_BALANCE_RB: int = 0x3B
+ADJUST_WHITE_BALANCE_MG: int = 0x3D
+ADJUST_GAIN: int = 0x3F
+ADJUST_AUTO_IRIS_LEVEL: int = 0x41
+ADJUST_AUTO_IRIS_PEAK_VALUE: int = 0x43
+QUERY: int = 0x45
+PRESET_SCAN: int = 0x47
+SET_ZERO_POSITION: int = 0x49
+SET_PAN_POSITION: int = 0x4B
+SET_TILT_POSITION: int = 0x4D
+SET_ZOOM_POSITION: int = 0x4F
+QUERY_PAN_POSITION: int = 0x51
+QUERY_TILT_POSITION: int = 0x53
+QUERY_ZOOM_POSITION: int = 0x55
+DOWNLOAD: int = 0x57
+QUERY_PAN_POSITION_RESPONSE: int = 0x59
+QUERY_TILT_POSITION_RESPONSE: int = 0x5B
+QUERY_ZOOM_POSITION_RESPONSE: int = 0x5D
+SET_MAGNIFICATION: int = 0x5F
+QUERY_MAGNIFICATION: int = 0x61
+QUERY_MAGNIFICATION_RESPONSE: int = 0x63
+ACTIVATE_ECHO_MODE: int = 0x65
+SET_REMOTE_BAUD_RATE: int = 0x67
+START_DOWNLOAD: int = 0x69
+QUERY_DEVICE_TYPE: int = 0x6B
+QUERY_DEVICE_TYPE_RESPONSE: int = 0x6D
+QUERY_DIAGNOSTIC_INFORMATION: int = 0x6F
+QUERY_DIAGNOSTIC_INFORMATION_RESPONSE: int = 0x71
+VERSION_INFORMATION_MACRO_OPCODE: int = 0x73
+EVEREST_MACRO_OPCODE: int = 0x75
+TIMESET_MACRO_OPCODE: int = 0x77
+SCREEN_MOVE: int = 0x79
 
-# Special Move Presets
+# Predefined Presets
 PRESET_FLIP: int = 0x21
-PRESET_GO_TO_ZERO_PAN: int = 0x22
+PRESET_ZERO: int = 0x22
+PRESET_AUX1: int = 0x54
+PRESET_AUX2: int = 0x55
+PRESET_WIPER: int = 0x56
+PRESET_WASHER: int = 0x57
+PRESET_IR_FILTER_IN: int = 0x58
+PRESET_IR_FILTER_OUT: int = 0x59
+PRESET_MANUAL_LEFT_LIMIT: int = 0x5A
+PRESET_MANUAL_RIGHT_LIMIT: int = 0x5B
+PRESET_SCAN_LEFT_LIMIT: int = 0x5C
+PRESET_SCAN_RIGHT_LIMIT: int = 0x5D
+PRESET_RESET: int = 0x5E
+PRESET_MENU_MODE: int = 0x5F
+PRESET_STOP_SCAN: int = 0x60
+PRESET_RANDOM_SCAN: int = 0x61
+PRESET_FRAME_SCAN: int = 0x62
+PRESET_AUTO_SCAN: int = 0x63
 
 
 @dataclass
@@ -367,14 +439,14 @@ class SendCommandFactory:
         return self.go_to_preset(PRESET_FLIP)
 
     def go_to_zero_pan(self) -> SendCommandModel:
-        return self.go_to_preset(PRESET_GO_TO_ZERO_PAN)
+        return self.go_to_preset(PRESET_ZERO)
 
     def set_auxiliary(self, aux_id: int) -> SendCommandModel:
         assert MIN_AUX_ID <= aux_id <= MAX_AUX_ID
 
         return SendCommandModel(
             address=self.address,
-            command_2=0x09,
+            command_2=SET_AUXILIARY,
             data_2=aux_id,
         )
 
@@ -383,7 +455,7 @@ class SendCommandFactory:
 
         return SendCommandModel(
             address=self.address,
-            command_2=0x0B,
+            command_2=CLEAR_AUXILIARY,
             data_2=aux_id,
         )
 
@@ -471,11 +543,50 @@ class SendCommandFactory:
             command_2=ZONE_SCAN_OFF,
         )
 
+    def set_pattern_start(self, pattern_id: int) -> SendCommandModel:
+        """
+        Set Pattern Start (D_EC_START_RECORD)
+        """
+
+        assert MIN_PATTERN_ID <= pattern_id <= MAX_PATTERN_ID
+
+        return SendCommandModel(
+            address=self.address,
+            command_2=SET_PATTERN_START,
+            data_2=pattern_id,
+        )
+
+    def set_pattern_end(self, pattern_id: int) -> SendCommandModel:
+        """
+        Set Pattern End (D_EC_END_RECORD)
+        """
+
+        assert MIN_PATTERN_ID <= pattern_id <= MAX_PATTERN_ID
+
+        return SendCommandModel(
+            address=self.address,
+            command_2=SET_PATTERN_STOP,
+            data_2=pattern_id,
+        )
+
+    def run_pattern(self, pattern_id: int) -> SendCommandModel:
+        """
+        Run Pattern (D_EC_START_PLAY)
+        """
+
+        assert MIN_PATTERN_ID <= pattern_id <= MAX_PATTERN_ID
+
+        return SendCommandModel(
+            address=self.address,
+            command_2=RUN_PATTERN,
+            data_2=pattern_id,
+        )
+
 
 class Pelco:
     address: int
 
-    def __init__(self, address: int = 0x01) -> None:
+    def __init__(self, *, address: int = 0x01) -> None:
         self.address = address
 
         self.command_factory = SendCommandFactory(address=address)
@@ -627,3 +738,12 @@ class Pelco:
 
     def zone_scan_off(self) -> GeneralResponse:
         return self.send_command(self.command_factory.zone_scan_off())
+
+    def set_pattern_start(self, pattern_id: int = 0x01) -> GeneralResponse:
+        return self.send_command(self.command_factory.set_pattern_start(pattern_id))
+
+    def set_pattern_end(self, pattern_id: int = 0x01) -> GeneralResponse:
+        return self.send_command(self.command_factory.set_pattern_end(pattern_id))
+
+    def run_pattern(self, pattern_id: int = 0x01) -> GeneralResponse:
+        return self.send_command(self.command_factory.run_pattern(pattern_id))
