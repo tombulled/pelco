@@ -406,3 +406,11 @@ class SendCommandFactory:
             command_2=AUTO_WHITE_BALANCE,
             data_2=auto_white_balance_mode,
         )
+
+    # TODO: ENABLE_DEVICE_PHASE_DELAY_MODE -> PRESET_SCAN
+
+    def set_zero_position(self) -> SendCommandModel:
+        return SendCommandModel(
+            address=self.address,
+            command_2=SET_ZERO_POSITION,
+        )
