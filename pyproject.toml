@@ -9,7 +9,6 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.8"
 
-
 [tool.poetry.group.dev.dependencies]
 mypy = "^0.991"
 black = "^22.10.0"
