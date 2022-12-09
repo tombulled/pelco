@@ -1,7 +1,7 @@
 import serial
 
 from .constants import *
-from .enums import PanSpeed, TiltSpeed, ZoomSpeed
+from .enums import PanSpeed, TiltSpeed, ZoomSpeed, FocusSpeed
 from .factory import SendCommandFactory
 from .models import GeneralResponse, SendCommandModel
 
@@ -173,3 +173,6 @@ class Pelco:
 
     def set_zoom_speed(self, zoom_speed: int = ZoomSpeed.MEDIUM) -> GeneralResponse:
         return self.send_command(self.command_factory.set_zoom_speed(zoom_speed))
+
+    def set_focus_speed(self, focus_speed: int = FocusSpeed.MEDIUM) -> GeneralResponse:
+        return self.send_command(self.command_factory.set_focus_speed(focus_speed))

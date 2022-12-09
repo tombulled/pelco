@@ -318,3 +318,16 @@ class SendCommandFactory:
             command_2=SET_ZOOM_SPEED,
             data_2=zoom_speed,
         )
+
+    def set_focus_speed(self, focus_speed: int) -> SendCommandModel:
+        """
+        Set Focus Speed (D_EC_FOCUS_SPEED)
+        """
+
+        assert MIN_FOCUS_SPEED <= focus_speed <= MAX_FOCUS_SPEED
+
+        return SendCommandModel(
+            address=self.address,
+            command_2=SET_FOCUS_SPEED,
+            data_2=focus_speed,
+        )
