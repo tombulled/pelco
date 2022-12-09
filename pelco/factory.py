@@ -414,3 +414,16 @@ class SendCommandFactory:
             address=self.address,
             command_2=SET_ZERO_POSITION,
         )
+
+    def set_pan_position(self, pan_position: int) -> SendCommandModel:
+        assert MIN_PAN_POSITION <= pan_position <= MAX_PAN_POSITION
+
+        pan_msb: int = (pan_position >> 8) & 0xFF
+        pan_lsb: int = pan_position & 0xFF
+
+        return SendCommandModel(
+            address=self.address,
+            command_2=SET_PAN_POSITION,
+            data_1=pan_msb,
+            data_2=pan_lsb,
+        )

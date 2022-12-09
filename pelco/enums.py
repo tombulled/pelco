@@ -54,3 +54,14 @@ class BacklightCompensationMode(IntEnum):
 class AutoWhiteBalanceMode(IntEnum):
     OFF: int = 0x01
     ON: int = 0x02
+
+class PanPosition(IntEnum):
+    D_0: int = 0
+    D_45: int = 45 * 100
+    D_90: int = 90 * 100
+    D_135: int = 135 * 100
+    D_180: int = 180 * 100
+    D_225: int = 225 * 100
+    D_270: int = 270 * 100
+    D_315: int = 315 * 100
+    D_360: int = 360 * 100 - 1
