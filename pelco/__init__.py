@@ -194,3 +194,6 @@ class Pelco:
 
     def set_pan_position(self, pan_position: int) -> GeneralResponse:
         return self.send_command(self.command_factory.set_pan_position(pan_position))
+
+    def set_tilt_position(self, tilt_position: int) -> GeneralResponse:
+        return self.send_command(self.command_factory.set_tilt_position(tilt_position))

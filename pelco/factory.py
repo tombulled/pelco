@@ -427,3 +427,17 @@ class SendCommandFactory:
             data_1=pan_msb,
             data_2=pan_lsb,
         )
+
+    def set_tilt_position(self, tilt_position: int) -> SendCommandModel:
+        assert MIN_TILT_POSITION <= tilt_position <= MAX_TILT_POSITION
+
+        tilt_msb: int = (tilt_position >> 8) & 0xFF
+        tilt_lsb: int = tilt_position & 0xFF
+
+        return SendCommandModel(
+            address=self.address,
+            command_2=SET_TILT_POSITION,
+            data_1=tilt_msb,
+            data_2=tilt_lsb,
+        )
+    
