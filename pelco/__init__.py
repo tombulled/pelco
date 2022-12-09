@@ -185,3 +185,6 @@ class Pelco:
 
     def set_auto_iris_mode(self, auto_iris_mode: int) -> GeneralResponse:
         return self.send_command(self.command_factory.set_auto_iris_mode(auto_iris_mode))
+
+    def set_agc_mode(self, agc_mode: int) -> GeneralResponse:
+        return self.send_command(self.command_factory.set_agc_mode(agc_mode))

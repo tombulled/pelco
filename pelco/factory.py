@@ -352,6 +352,7 @@ class SendCommandFactory:
         return SendCommandModel(
             address=self.address,
             command_2=AUTO_FOCUS_MODE,
+            data_2=auto_focus_mode,
         )
 
     def set_auto_iris_mode(self, auto_iris_mode: int) -> SendCommandModel:
@@ -364,4 +365,18 @@ class SendCommandFactory:
         return SendCommandModel(
             address=self.address,
             command_2=AUTO_IRIS_MODE,
+            data_2=auto_iris_mode,
+        )
+
+    def set_agc_mode(self, agc_mode: int) -> SendCommandModel:
+        """
+        AGC (D_EC_AGC)
+        """
+
+        assert MIN_AGC_MODE <= agc_mode <= MAX_AGC_MODE
+
+        return SendCommandModel(
+            address=self.address,
+            command_2=AGC_MODE,
+            data_2=agc_mode,
         )
