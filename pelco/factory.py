@@ -331,3 +331,13 @@ class SendCommandFactory:
             command_2=SET_FOCUS_SPEED,
             data_2=focus_speed,
         )
+
+    def reset_camera_to_defaults(self) -> SendCommandModel:
+        """
+        Reset Camera to Defaults (D_EC_CAMERA_RESET)
+        """
+
+        return SendCommandModel(
+            address=self.address,
+            command_2=RESET_CAMERA_DEFAULTS,
+        )

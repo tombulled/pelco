@@ -176,3 +176,6 @@ class Pelco:
 
     def set_focus_speed(self, focus_speed: int = FocusSpeed.MEDIUM) -> GeneralResponse:
         return self.send_command(self.command_factory.set_focus_speed(focus_speed))
+
+    def reset_camera_to_defaults(self) -> GeneralResponse:
+        return self.send_command(self.command_factory.reset_camera_to_defaults())
