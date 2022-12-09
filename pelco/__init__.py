@@ -188,3 +188,6 @@ class Pelco:
 
     def set_agc_mode(self, agc_mode: int) -> GeneralResponse:
         return self.send_command(self.command_factory.set_agc_mode(agc_mode))
+
+    def set_backlight_compensation_mode(self, backlight_compensation_mode: int) -> GeneralResponse:
+        return self.send_command(self.command_factory.set_backlight_compensation_mode(backlight_compensation_mode))

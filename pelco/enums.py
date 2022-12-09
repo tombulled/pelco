@@ -36,10 +36,17 @@ class AutoFocusMode(IntEnum):
     AUTO: int = 0x00
     OFF: int = 0x01
 
+
 class AutoIrisMode(IntEnum):
     AUTO: int = 0x00
     OFF: int = 0x01
 
+
 class AutomaticGainControlMode(IntEnum):
     AUTO: int = 0x00
     OFF: int = 0x01
+
+
+class BacklightCompensationMode(IntEnum):
+    OFF: int = 0x00
+    ON: int = 0x01

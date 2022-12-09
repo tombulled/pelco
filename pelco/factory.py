@@ -380,3 +380,16 @@ class SendCommandFactory:
             command_2=AGC_MODE,
             data_2=agc_mode,
         )
+
+    def set_backlight_compensation_mode(self, backlight_compensation_mode: int) -> SendCommandModel:
+        """
+        Backlight Compensation (D_EC_BLC)
+        """
+
+        assert MIN_BACKLIGHT_COMPENSATION_MODE <= backlight_compensation_mode <= MAX_BACKLIGHT_COMPENSATION_MODE
+
+        return SendCommandModel(
+            address=self.address,
+            command_2=BACKLIGHT_COMPENSATION,
+            data_2=backlight_compensation_mode,
+        )
