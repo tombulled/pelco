@@ -393,3 +393,16 @@ class SendCommandFactory:
             command_2=BACKLIGHT_COMPENSATION,
             data_2=backlight_compensation_mode,
         )
+
+    def set_auto_white_balance_mode(self, auto_white_balance_mode: int) -> SendCommandModel:
+        """
+        Auto White Balance (D_EC_AWB)
+        """
+
+        assert MIN_AUTO_WHITE_BALANCE_MODE <= auto_white_balance_mode <= MAX_AUTO_WHITE_BALANCE_MODE
+
+        return SendCommandModel(
+            address=self.address,
+            command_2=AUTO_WHITE_BALANCE,
+            data_2=auto_white_balance_mode,
+        )

@@ -50,3 +50,7 @@ class AutomaticGainControlMode(IntEnum):
 class BacklightCompensationMode(IntEnum):
     OFF: int = 0x00
     ON: int = 0x01
+
+class AutoWhiteBalanceMode(IntEnum):
+    OFF: int = 0x01
+    ON: int = 0x02

@@ -54,13 +54,9 @@ class Pelco:
         return self.send_command(self.command_factory.stop())
 
     def pan_right(self, speed: int = PanSpeed.MEDIUM) -> GeneralResponse:
-        assert 0 <= speed <= 0x3F
-
         return self.send_command(self.command_factory.pan_right(speed))
 
     def pan_left(self, speed: int = PanSpeed.MEDIUM) -> GeneralResponse:
-        assert 0 <= speed <= 0x3F
-
         return self.send_command(self.command_factory.pan_left(speed))
 
     def pan(self, speed: int) -> GeneralResponse:
@@ -72,13 +68,9 @@ class Pelco:
             return self.stop()
 
     def tilt_up(self, speed: int = TiltSpeed.MEDIUM) -> GeneralResponse:
-        assert 0 <= speed <= 0x3F
-
         return self.send_command(self.command_factory.tilt_up(speed))
 
     def tilt_down(self, speed: int = TiltSpeed.MEDIUM) -> GeneralResponse:
-        assert 0 <= speed <= 0x3F
-
         return self.send_command(self.command_factory.tilt_down(speed))
 
     def tilt(self, speed: int) -> GeneralResponse:
@@ -191,3 +183,6 @@ class Pelco:
 
     def set_backlight_compensation_mode(self, backlight_compensation_mode: int) -> GeneralResponse:
         return self.send_command(self.command_factory.set_backlight_compensation_mode(backlight_compensation_mode))
+
+    def set_auto_white_balance_mode(self, auto_white_balance_mode: int) -> GeneralResponse:
+        return self.send_command(self.command_factory.set_auto_white_balance_mode(auto_white_balance_mode))
