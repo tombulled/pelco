@@ -24,8 +24,14 @@ class ZoomSpeed(IntEnum):
     FAST: int = 0x02
     FASTEST: int = 0x03
 
+
 class FocusSpeed(IntEnum):
     SLOW: int = 0x00
     MEDIUM: int = 0x01
     FAST: int = 0x02
     FASTEST: int = 0x03
+
+
+class AutoFocusMode(IntEnum):
+    AUTO: int = 0x00
+    OFF: int = 0x01

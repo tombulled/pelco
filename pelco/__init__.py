@@ -179,3 +179,6 @@ class Pelco:
 
     def reset_camera_to_defaults(self) -> GeneralResponse:
         return self.send_command(self.command_factory.reset_camera_to_defaults())
+
+    def set_auto_focus_mode(self, auto_focus_mode: int) -> GeneralResponse:
+        return self.send_command(self.command_factory.set_auto_focus_mode(auto_focus_mode))

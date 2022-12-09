@@ -341,3 +341,15 @@ class SendCommandFactory:
             address=self.address,
             command_2=RESET_CAMERA_DEFAULTS,
         )
+
+    def set_auto_focus_mode(self, auto_focus_mode: int) -> SendCommandModel:
+        """
+        Auto Focus (D_EC_AUTO_FOCUS)
+        """
+
+        assert MIN_AUTO_FOCUS_MODE <= auto_focus_mode <= MAX_AUTO_FOCUS_MODE
+
+        return SendCommandModel(
+            address=self.address,
+            command_2=AUTO_FOCUS_MODE,
+        )
