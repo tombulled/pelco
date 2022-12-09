@@ -13,7 +13,7 @@ class Pelco:
         self.address = address
 
         self.command_factory = SendCommandFactory(address=address)
-        self.s = serial.Serial(port="/dev/ttyUSB0", baudrate=2400)
+        self.s = serial.Serial(port="/dev/ttyUSB0", baudrate=2400, timeout=1)
 
     def send_command(self, command: SendCommandModel, /) -> GeneralResponse:
         self.s.write(command.serialise())

@@ -133,3 +133,4 @@ dmypy.json
 
 # Custom
 # app.py
+resources/

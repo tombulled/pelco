@@ -119,7 +119,7 @@ class SendCommandFactory:
         Set Preset (D_EC_SET_PRESET)
         """
 
-        assert MIN_PRESET < id <= MAX_PRESET
+        assert MIN_PRESET <= id <= MAX_PRESET
 
         return SendCommandModel(
             address=self.address,
@@ -136,7 +136,7 @@ class SendCommandFactory:
         It is not necessary to clear a preset before setting it.
         """
 
-        assert MIN_PRESET < id <= MAX_PRESET
+        assert MIN_PRESET <= id <= MAX_PRESET
 
         return SendCommandModel(
             address=self.address,
@@ -151,7 +151,7 @@ class SendCommandFactory:
         Causes the camera unit to move, at preset speed, to the requested position.
         """
 
-        assert MIN_PRESET < id <= MAX_PRESET
+        assert MIN_PRESET <= id <= MAX_PRESET
 
         return SendCommandModel(
             address=self.address,
