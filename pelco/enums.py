@@ -35,3 +35,7 @@ class FocusSpeed(IntEnum):
 class AutoFocusMode(IntEnum):
     AUTO: int = 0x00
     OFF: int = 0x01
+
+class AutoIrisMode(IntEnum):
+    AUTO: int = 0x00
+    OFF: int = 0x01

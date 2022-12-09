@@ -182,3 +182,6 @@ class Pelco:
 
     def set_auto_focus_mode(self, auto_focus_mode: int) -> GeneralResponse:
         return self.send_command(self.command_factory.set_auto_focus_mode(auto_focus_mode))
+
+    def set_auto_iris_mode(self, auto_iris_mode: int) -> GeneralResponse:
+        return self.send_command(self.command_factory.set_auto_iris_mode(auto_iris_mode))

@@ -353,3 +353,15 @@ class SendCommandFactory:
             address=self.address,
             command_2=AUTO_FOCUS_MODE,
         )
+
+    def set_auto_iris_mode(self, auto_iris_mode: int) -> SendCommandModel:
+        """
+        Auto Iris (D_EC_AUTO_IRIS)
+        """
+
+        assert MIN_AUTO_IRIS_MODE <= auto_iris_mode <= MAX_AUTO_IRIS_MODE
+
+        return SendCommandModel(
+            address=self.address,
+            command_2=AUTO_IRIS_MODE,
+        )
