@@ -1,7 +1,7 @@
 import serial
 
 from .constants import *
-from .enums import PanSpeed, TiltSpeed, ZoomSpeed, FocusSpeed
+from .enums import FocusSpeed, PanSpeed, TiltSpeed, ZoomSpeed
 from .factory import SendCommandFactory
 from .models import GeneralResponse, SendCommandModel
 
@@ -173,19 +173,33 @@ class Pelco:
         return self.send_command(self.command_factory.reset_camera_to_defaults())
 
     def set_auto_focus_mode(self, auto_focus_mode: int) -> GeneralResponse:
-        return self.send_command(self.command_factory.set_auto_focus_mode(auto_focus_mode))
+        return self.send_command(
+            self.command_factory.set_auto_focus_mode(auto_focus_mode)
+        )
 
     def set_auto_iris_mode(self, auto_iris_mode: int) -> GeneralResponse:
-        return self.send_command(self.command_factory.set_auto_iris_mode(auto_iris_mode))
+        return self.send_command(
+            self.command_factory.set_auto_iris_mode(auto_iris_mode)
+        )
 
     def set_agc_mode(self, agc_mode: int) -> GeneralResponse:
         return self.send_command(self.command_factory.set_agc_mode(agc_mode))
 
-    def set_backlight_compensation_mode(self, backlight_compensation_mode: int) -> GeneralResponse:
-        return self.send_command(self.command_factory.set_backlight_compensation_mode(backlight_compensation_mode))
+    def set_backlight_compensation_mode(
+        self, backlight_compensation_mode: int
+    ) -> GeneralResponse:
+        return self.send_command(
+            self.command_factory.set_backlight_compensation_mode(
+                backlight_compensation_mode
+            )
+        )
 
-    def set_auto_white_balance_mode(self, auto_white_balance_mode: int) -> GeneralResponse:
-        return self.send_command(self.command_factory.set_auto_white_balance_mode(auto_white_balance_mode))
+    def set_auto_white_balance_mode(
+        self, auto_white_balance_mode: int
+    ) -> GeneralResponse:
+        return self.send_command(
+            self.command_factory.set_auto_white_balance_mode(auto_white_balance_mode)
+        )
 
     # TODO: ENABLE_DEVICE_PHASE_DELAY_MODE -> PRESET_SCAN
 
@@ -197,3 +211,6 @@ class Pelco:
 
     def set_tilt_position(self, tilt_position: int) -> GeneralResponse:
         return self.send_command(self.command_factory.set_tilt_position(tilt_position))
+
+    def set_zoom_position(self, zoom_position: int) -> GeneralResponse:
+        return self.send_command(self.command_factory.set_zoom_position(zoom_position))

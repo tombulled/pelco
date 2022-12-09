@@ -8,7 +8,7 @@ from .models import SendCommandModel
 class SendCommandFactory:
     address: int
 
-    def __init__(self, address: int = 0x01):
+    def __init__(self, address: int = DEFAULT_ADDRESS):
         assert MIN_ADDRESS <= address <= MAX_ADDRESS
 
         self.address = address
@@ -381,12 +381,18 @@ class SendCommandFactory:
             data_2=agc_mode,
         )
 
-    def set_backlight_compensation_mode(self, backlight_compensation_mode: int) -> SendCommandModel:
+    def set_backlight_compensation_mode(
+        self, backlight_compensation_mode: int
+    ) -> SendCommandModel:
         """
         Backlight Compensation (D_EC_BLC)
         """
 
-        assert MIN_BACKLIGHT_COMPENSATION_MODE <= backlight_compensation_mode <= MAX_BACKLIGHT_COMPENSATION_MODE
+        assert (
+            MIN_BACKLIGHT_COMPENSATION_MODE
+            <= backlight_compensation_mode
+            <= MAX_BACKLIGHT_COMPENSATION_MODE
+        )
 
         return SendCommandModel(
             address=self.address,
@@ -394,12 +400,18 @@ class SendCommandFactory:
             data_2=backlight_compensation_mode,
         )
 
-    def set_auto_white_balance_mode(self, auto_white_balance_mode: int) -> SendCommandModel:
+    def set_auto_white_balance_mode(
+        self, auto_white_balance_mode: int
+    ) -> SendCommandModel:
         """
         Auto White Balance (D_EC_AWB)
         """
 
-        assert MIN_AUTO_WHITE_BALANCE_MODE <= auto_white_balance_mode <= MAX_AUTO_WHITE_BALANCE_MODE
+        assert (
+            MIN_AUTO_WHITE_BALANCE_MODE
+            <= auto_white_balance_mode
+            <= MAX_AUTO_WHITE_BALANCE_MODE
+        )
 
         return SendCommandModel(
             address=self.address,
@@ -418,8 +430,8 @@ class SendCommandFactory:
     def set_pan_position(self, pan_position: int) -> SendCommandModel:
         assert MIN_PAN_POSITION <= pan_position <= MAX_PAN_POSITION
 
-        pan_msb: int = (pan_position >> 8) & 0xFF
-        pan_lsb: int = pan_position & 0xFF
+        pan_msb: int = (pan_position >> BYTE) & BYTE_MAX
+        pan_lsb: int = pan_position & BYTE_MAX
 
         return SendCommandModel(
             address=self.address,
@@ -431,8 +443,8 @@ class SendCommandFactory:
     def set_tilt_position(self, tilt_position: int) -> SendCommandModel:
         assert MIN_TILT_POSITION <= tilt_position <= MAX_TILT_POSITION
 
-        tilt_msb: int = (tilt_position >> 8) & 0xFF
-        tilt_lsb: int = tilt_position & 0xFF
+        tilt_msb: int = (tilt_position >> BYTE) & BYTE_MAX
+        tilt_lsb: int = tilt_position & BYTE_MAX
 
         return SendCommandModel(
             address=self.address,
@@ -440,4 +452,16 @@ class SendCommandFactory:
             data_1=tilt_msb,
             data_2=tilt_lsb,
         )
-    
+
+    def set_zoom_position(self, zoom_position: int) -> SendCommandModel:
+        assert MIN_ZOOM_POSITION <= zoom_position <= MAX_ZOOM_POSITION
+
+        zoom_msb: int = (zoom_position >> BYTE) & BYTE_MAX
+        zoom_lsb: int = zoom_position & BYTE_MAX
+
+        return SendCommandModel(
+            address=self.address,
+            command_2=SET_ZOOM_POSITION,
+            data_1=zoom_msb,
+            data_2=zoom_lsb,
+        )

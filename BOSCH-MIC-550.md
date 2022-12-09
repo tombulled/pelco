@@ -12,3 +12,6 @@
 | 0x06   | Not Set        |
 | 0x07   | Not Set        |
 | 0x08   | Not Set        |
+
+## Zoom
+Camera has a maximum zoom position of ~0x8540
