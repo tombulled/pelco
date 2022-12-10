@@ -14,4 +14,7 @@
 | 0x08   | Not Set        |
 
 ## Zoom
-Camera has a maximum zoom position of ~0x8540
+Camera appears to have a maximum zoom position of ~0x8540
+
+## Query
+Camera does not appear to respond to the `QUERY` command
