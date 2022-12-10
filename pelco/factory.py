@@ -463,6 +463,29 @@ class SendCommandFactory:
             data_2=line_lock_phase_delay_lsb,
         )
 
+    def adjust_white_balance_rb(self, white_balance_mode: int, white_balance: int) -> SendCommandModel:
+        assert (
+            MIN_WHITE_BALANCE_RB_MODE
+            <= white_balance_mode
+            <= MAX_WHITE_BALANCE_RB_MODE
+        )
+        assert (
+            MIN_WHITE_BALANCE_RB
+            <= white_balance
+            <= MAX_WHITE_BALANCE_RB
+        )
+
+        white_balance_msb: int = (white_balance >> BYTE) & BYTE_MAX
+        white_balance_lsb: int = white_balance & BYTE_MAX
+
+        return SendCommandModel(
+            address=self.address,
+            command_1=white_balance_mode,
+            command_2=ADJUST_WHITE_BALANCE_RB,
+            data_1=white_balance_msb,
+            data_2=white_balance_lsb,
+        )
+
     # ...
 
     def set_zero_position(self) -> SendCommandModel:

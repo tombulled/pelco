@@ -84,3 +84,8 @@ class TiltPosition(IntEnum):
 class LineLockPhaseDelayMode(IntEnum):
     NEW: int = 0x00
     DELTA: int = 0x01
+
+
+class WhiteBalanceMode(IntEnum):
+    NEW: int = 0x00
+    DELTA: int = 0x01

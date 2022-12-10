@@ -216,6 +216,15 @@ class Pelco:
             )
         )
 
+    def adjust_white_balance_rb(
+        self, white_balance_mode: int, white_balance: int
+    ) -> GeneralResponse:
+        return self.send_command(
+            self.command_factory.adjust_white_balance_rb(
+                white_balance_mode, white_balance
+            )
+        )
+
     # ...
 
     def set_zero_position(self) -> GeneralResponse:
