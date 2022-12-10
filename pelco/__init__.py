@@ -201,7 +201,10 @@ class Pelco:
             self.command_factory.set_auto_white_balance_mode(auto_white_balance_mode)
         )
 
-    # TODO: ENABLE_DEVICE_PHASE_DELAY_MODE -> PRESET_SCAN
+    def enable_device_phase_delay_mode(self) -> GeneralResponse:
+        return self.send_command(self.command_factory.enable_device_phase_delay_mode())
+
+    # ...
 
     def set_zero_position(self) -> GeneralResponse:
         return self.send_command(self.command_factory.set_zero_position())
