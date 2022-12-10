@@ -239,6 +239,15 @@ class Pelco:
             self.command_factory.adjust_gain(adjust_gain_mode, gain)
         )
 
+    def adjust_auto_iris_level(
+        self, adjust_auto_iris_level_mode: int, auto_iris_level: int
+    ) -> GeneralResponse:
+        return self.send_command(
+            self.command_factory.adjust_auto_iris_level(
+                adjust_auto_iris_level_mode, auto_iris_level
+            )
+        )
+
     # ...
 
     def set_zero_position(self) -> GeneralResponse:

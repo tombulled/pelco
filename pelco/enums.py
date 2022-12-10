@@ -99,3 +99,8 @@ class WhiteBalanceMGMode(IntEnum):
 class AdjustGainMode(IntEnum):
     NEW: int = 0x00
     DELTA: int = 0x01
+
+
+class AdjustAutoIrisMode(IntEnum):
+    NEW: int = 0x00
+    DELTA: int = 0x01

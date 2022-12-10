@@ -463,17 +463,13 @@ class SendCommandFactory:
             data_2=line_lock_phase_delay_lsb,
         )
 
-    def adjust_white_balance_rb(self, white_balance_mode: int, white_balance: int) -> SendCommandModel:
+    def adjust_white_balance_rb(
+        self, white_balance_mode: int, white_balance: int
+    ) -> SendCommandModel:
         assert (
-            MIN_WHITE_BALANCE_RB_MODE
-            <= white_balance_mode
-            <= MAX_WHITE_BALANCE_RB_MODE
+            MIN_WHITE_BALANCE_RB_MODE <= white_balance_mode <= MAX_WHITE_BALANCE_RB_MODE
         )
-        assert (
-            MIN_WHITE_BALANCE_RB
-            <= white_balance
-            <= MAX_WHITE_BALANCE_RB
-        )
+        assert MIN_WHITE_BALANCE_RB <= white_balance <= MAX_WHITE_BALANCE_RB
 
         white_balance_msb: int = (white_balance >> BYTE) & BYTE_MAX
         white_balance_lsb: int = white_balance & BYTE_MAX
@@ -486,17 +482,13 @@ class SendCommandFactory:
             data_2=white_balance_lsb,
         )
 
-    def adjust_white_balance_mg(self, white_balance_mode: int, white_balance: int) -> SendCommandModel:
+    def adjust_white_balance_mg(
+        self, white_balance_mode: int, white_balance: int
+    ) -> SendCommandModel:
         assert (
-            MIN_WHITE_BALANCE_MG_MODE
-            <= white_balance_mode
-            <= MAX_WHITE_BALANCE_MG_MODE
+            MIN_WHITE_BALANCE_MG_MODE <= white_balance_mode <= MAX_WHITE_BALANCE_MG_MODE
         )
-        assert (
-            MIN_WHITE_BALANCE_MG
-            <= white_balance
-            <= MAX_WHITE_BALANCE_MG
-        )
+        assert MIN_WHITE_BALANCE_MG <= white_balance <= MAX_WHITE_BALANCE_MG
 
         white_balance_msb: int = (white_balance >> BYTE) & BYTE_MAX
         white_balance_lsb: int = white_balance & BYTE_MAX
@@ -510,16 +502,8 @@ class SendCommandFactory:
         )
 
     def adjust_gain(self, adjust_gain_mode: int, adjust_gain: int) -> SendCommandModel:
-        assert (
-            MIN_ADJUST_GAIN_MODE
-            <= adjust_gain_mode
-            <= MAX_ADJUST_GAIN_MODE
-        )
-        assert (
-            MIN_ADJUST_GAIN
-            <= adjust_gain
-            <= MAX_ADJUST_GAIN
-        )
+        assert MIN_ADJUST_GAIN_MODE <= adjust_gain_mode <= MAX_ADJUST_GAIN_MODE
+        assert MIN_ADJUST_GAIN <= adjust_gain <= MAX_ADJUST_GAIN
 
         adjust_gain_msb: int = (adjust_gain >> BYTE) & BYTE_MAX
         adjust_gain_lsb: int = adjust_gain & BYTE_MAX
@@ -530,6 +514,29 @@ class SendCommandFactory:
             command_2=ADJUST_GAIN,
             data_1=adjust_gain_msb,
             data_2=adjust_gain_lsb,
+        )
+
+    def adjust_auto_iris_level(
+        self, auto_iris_level_mode: int, auto_iris_level: int
+    ) -> SendCommandModel:
+        assert (
+            MIN_ADJUST_AUTO_IRIS_LEVEL_MODE
+            <= auto_iris_level_mode
+            <= MAX_ADJUST_AUTO_IRIS_LEVEL_MODE
+        )
+        assert (
+            MIN_ADJUST_AUTO_IRIS_LEVEL <= auto_iris_level <= MAX_ADJUST_AUTO_IRIS_LEVEL
+        )
+
+        auto_iris_level_msb: int = (auto_iris_level >> BYTE) & BYTE_MAX
+        auto_iris_level_lsb: int = auto_iris_level & BYTE_MAX
+
+        return SendCommandModel(
+            address=self.address,
+            command_1=auto_iris_level_mode,
+            command_2=ADJUST_AUTO_IRIS_LEVEL,
+            data_1=auto_iris_level_msb,
+            data_2=auto_iris_level_lsb,
         )
 
     # ...
