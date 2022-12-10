@@ -86,6 +86,11 @@ class LineLockPhaseDelayMode(IntEnum):
     DELTA: int = 0x01
 
 
-class WhiteBalanceMode(IntEnum):
+class WhiteBalanceRBMode(IntEnum):
+    NEW: int = 0x00
+    DELTA: int = 0x01
+
+
+class WhiteBalanceMGMode(IntEnum):
     NEW: int = 0x00
     DELTA: int = 0x01
