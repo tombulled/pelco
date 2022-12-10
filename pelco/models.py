@@ -117,4 +117,9 @@ class ExtendedResponse:
 
 @dataclass(frozen=True, eq=True)
 class QueryResponse:
-    ...
+    sync: int = SYNC  # SYNC
+    address: int = 0x00  # ADDR
+    data_1: int = 0x00 # DATA1
+    # ...
+    data_15: int = 0x00 # DATA15
+    checksum: int = 0x00  # CKSM

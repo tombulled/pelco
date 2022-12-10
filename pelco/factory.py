@@ -564,6 +564,16 @@ class SendCommandFactory:
             data_2=auto_iris_peak_value_lsb,
         )
 
+    def query(self, query_type: int) -> SendCommandModel:
+        assert MIN_QUERY_TYPE <= query_type <= MAX_QUERY_TYPE
+
+        # This command does not utilise the address field.
+        # This is so that the address of a unit may be determined programatically.
+        return SendCommandModel(
+            command_1=query_type,
+            command_2=QUERY,
+        )
+
     # ...
 
     def set_zero_position(self) -> SendCommandModel:
