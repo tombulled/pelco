@@ -509,6 +509,29 @@ class SendCommandFactory:
             data_2=white_balance_lsb,
         )
 
+    def adjust_gain(self, adjust_gain_mode: int, adjust_gain: int) -> SendCommandModel:
+        assert (
+            MIN_ADJUST_GAIN_MODE
+            <= adjust_gain_mode
+            <= MAX_ADJUST_GAIN_MODE
+        )
+        assert (
+            MIN_ADJUST_GAIN
+            <= adjust_gain
+            <= MAX_ADJUST_GAIN
+        )
+
+        adjust_gain_msb: int = (adjust_gain >> BYTE) & BYTE_MAX
+        adjust_gain_lsb: int = adjust_gain & BYTE_MAX
+
+        return SendCommandModel(
+            address=self.address,
+            command_1=adjust_gain_mode,
+            command_2=ADJUST_GAIN,
+            data_1=adjust_gain_msb,
+            data_2=adjust_gain_lsb,
+        )
+
     # ...
 
     def set_zero_position(self) -> SendCommandModel:

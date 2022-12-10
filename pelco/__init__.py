@@ -234,6 +234,11 @@ class Pelco:
             )
         )
 
+    def adjust_gain(self, adjust_gain_mode: int, gain: int) -> GeneralResponse:
+        return self.send_command(
+            self.command_factory.adjust_gain(adjust_gain_mode, gain)
+        )
+
     # ...
 
     def set_zero_position(self) -> GeneralResponse:
