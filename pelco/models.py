@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
 from .constants import SYNC
+from .errors import ResponseError
 
 
 @dataclass(frozen=True, eq=True)
@@ -73,14 +74,31 @@ class GeneralResponse:
         )
 
     @classmethod
-    def deserialise(cls, command: bytes, /) -> "GeneralResponse":
-        assert len(command) == 4
+    def deserialise(cls, response: bytes, /) -> "GeneralResponse":
+        expected_response_length: int = 4
+        response_length: int = len(response)
+
+        if len(response) != expected_response_length:
+            raise ResponseError(
+                f"Expected response of length {expected_response_length}, got response of length {response_length}"
+            )
+
+        sync: int
+        address: int
+        alarms: int
+        checksum: int
+        sync, address, alarms, checksum = response
+
+        if sync != SYNC:
+            raise ResponseError(f"Invalid sync byte, expected {SYNC!r}, got {sync!r}")
+
+        # TODO: Check checksum here
 
         model: GeneralResponse = cls(
-            sync=command[0],
-            address=command[1],
-            alarms=command[2],
-            checksum=command[3],
+            sync=sync,
+            address=address,
+            alarms=alarms,
+            checksum=checksum,
         )
 
         return model

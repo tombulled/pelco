@@ -204,6 +204,9 @@ class Pelco:
     def enable_device_phase_delay_mode(self) -> GeneralResponse:
         return self.send_command(self.command_factory.enable_device_phase_delay_mode())
 
+    def set_shutter_speed(self, shutter_speed: int) -> GeneralResponse:
+        return self.send_command(self.command_factory.set_shutter_speed(shutter_speed))
+
     # ...
 
     def set_zero_position(self) -> GeneralResponse:

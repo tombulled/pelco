@@ -425,6 +425,19 @@ class SendCommandFactory:
             command_2=ENABLE_DEVICE_PHASE_DELAY_MODE,
         )
 
+    def set_shutter_speed(self, shutter_speed: int) -> SendCommandModel:
+        assert MIN_SHUTTER_SPEED <= shutter_speed <= MAX_SHUTTER_SPEED
+
+        shutter_speed_msb: int = (shutter_speed >> BYTE) & BYTE_MAX
+        shutter_speed_lsb: int = shutter_speed & BYTE_MAX
+
+        return SendCommandModel(
+            address=self.address,
+            command_2=SET_SHUTTER_SPEED,
+            data_1=shutter_speed_msb,
+            data_2=shutter_speed_lsb,
+        )
+
     # ...
 
     def set_zero_position(self) -> SendCommandModel:
