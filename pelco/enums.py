@@ -79,3 +79,8 @@ class TiltPosition(IntEnum):
     D_270: int = 270 * 100
     D_315: int = 315 * 100
     D_360: int = 360 * 100 - 1
+
+
+class LineLockPhaseDelayMode(IntEnum):
+    NEW: int = 0x00
+    DELTA: int = 0x01

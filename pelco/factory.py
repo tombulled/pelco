@@ -438,6 +438,31 @@ class SendCommandFactory:
             data_2=shutter_speed_lsb,
         )
 
+    def adjust_line_lock_phase_delay(
+        self, line_lock_phase_delay_mode: int, line_lock_phase_delay: int
+    ) -> SendCommandModel:
+        assert (
+            MIN_LINE_LOCK_PHASE_DELAY_MODE
+            <= line_lock_phase_delay_mode
+            <= MAX_LINE_LOCK_PHASE_DELAY_MODE
+        )
+        assert (
+            MIN_LINE_LOCK_PHASE_DELAY
+            <= line_lock_phase_delay
+            <= MAX_LINE_LOCK_PHASE_DELAY
+        )
+
+        line_lock_phase_delay_msb: int = (line_lock_phase_delay >> BYTE) & BYTE_MAX
+        line_lock_phase_delay_lsb: int = line_lock_phase_delay & BYTE_MAX
+
+        return SendCommandModel(
+            address=self.address,
+            command_1=line_lock_phase_delay_mode,
+            command_2=ADJUST_LINE_LOCK_PHASE_DELAY,
+            data_1=line_lock_phase_delay_msb,
+            data_2=line_lock_phase_delay_lsb,
+        )
+
     # ...
 
     def set_zero_position(self) -> SendCommandModel:

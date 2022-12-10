@@ -207,6 +207,15 @@ class Pelco:
     def set_shutter_speed(self, shutter_speed: int) -> GeneralResponse:
         return self.send_command(self.command_factory.set_shutter_speed(shutter_speed))
 
+    def adjust_line_lock_phase_delay(
+        self, line_lock_phase_delay_mode: int, line_lock_phase_delay: int
+    ) -> GeneralResponse:
+        return self.send_command(
+            self.command_factory.adjust_line_lock_phase_delay(
+                line_lock_phase_delay_mode, line_lock_phase_delay
+            )
+        )
+
     # ...
 
     def set_zero_position(self) -> GeneralResponse:
