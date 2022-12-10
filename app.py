@@ -8,8 +8,9 @@ assert comports and comports[0].product == "FT232R USB UART"
 
 p = pelco.Pelco(address=0x02)
 
-ok = lambda: p.focus_near()
-up = lambda: p.tilt_up()
-down = lambda: p.tilt_down()
-left = lambda: p.pan_left()
-right = lambda: p.pan_right()
+f = lambda: p.focus_near()
+u = lambda: p.tilt_up()
+d = lambda: p.tilt_down()
+l = lambda: p.pan_left()
+r = lambda: p.pan_right()
+s = lambda: p.stop()

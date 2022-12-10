@@ -539,6 +539,31 @@ class SendCommandFactory:
             data_2=auto_iris_level_lsb,
         )
 
+    def adjust_auto_iris_peak_value(
+        self, auto_iris_peak_value_mode: int, auto_iris_peak_value: int
+    ) -> SendCommandModel:
+        assert (
+            MIN_ADJUST_AUTO_IRIS_PEAK_VALUE_MODE
+            <= auto_iris_peak_value_mode
+            <= MAX_ADJUST_AUTO_IRIS_PEAK_VALUE_MODE
+        )
+        assert (
+            MIN_ADJUST_AUTO_IRIS_PEAK_VALUE
+            <= auto_iris_peak_value
+            <= MAX_ADJUST_AUTO_IRIS_PEAK_VALUE
+        )
+
+        auto_iris_peak_value_msb: int = (auto_iris_peak_value >> BYTE) & BYTE_MAX
+        auto_iris_peak_value_lsb: int = auto_iris_peak_value & BYTE_MAX
+
+        return SendCommandModel(
+            address=self.address,
+            command_1=auto_iris_peak_value_mode,
+            command_2=ADJUST_AUTO_IRIS_PEAK_VALUE,
+            data_1=auto_iris_peak_value_msb,
+            data_2=auto_iris_peak_value_lsb,
+        )
+
     # ...
 
     def set_zero_position(self) -> SendCommandModel:

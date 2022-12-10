@@ -248,6 +248,15 @@ class Pelco:
             )
         )
 
+    def adjust_auto_iris_peak_value(
+        self, adjust_auto_iris_peak_value_mode: int, auto_iris_peak_value: int
+    ) -> GeneralResponse:
+        return self.send_command(
+            self.command_factory.adjust_auto_iris_peak_value(
+                adjust_auto_iris_peak_value_mode, auto_iris_peak_value
+            )
+        )
+
     # ...
 
     def set_zero_position(self) -> GeneralResponse:

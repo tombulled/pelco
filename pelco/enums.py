@@ -101,6 +101,11 @@ class AdjustGainMode(IntEnum):
     DELTA: int = 0x01
 
 
-class AdjustAutoIrisMode(IntEnum):
+class AdjustAutoIrisLevelMode(IntEnum):
+    NEW: int = 0x00
+    DELTA: int = 0x01
+
+
+class AdjustAutoIrisPeakValueMode(IntEnum):
     NEW: int = 0x00
     DELTA: int = 0x01
