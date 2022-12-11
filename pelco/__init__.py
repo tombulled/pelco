@@ -304,3 +304,9 @@ class Pelco:
             self.command_factory.query_tilt_position(),
             expected_response_opcode=QUERY_TILT_POSITION_RESPONSE,
         )
+
+    def query_zoom_position(self) -> ExtendedResponse:
+        return self.send_command_extended_response(
+            self.command_factory.query_zoom_position(),
+            expected_response_opcode=QUERY_ZOOM_POSITION_RESPONSE,
+        )

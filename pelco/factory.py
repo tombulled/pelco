@@ -633,3 +633,9 @@ class SendCommandFactory:
             address=self.address,
             command_2=QUERY_TILT_POSITION,
         )
+
+    def query_zoom_position(self) -> SendCommandModel:
+        return SendCommandModel(
+            address=self.address,
+            command_2=QUERY_ZOOM_POSITION,
+        )
