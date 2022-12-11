@@ -18,3 +18,6 @@ Camera appears to have a maximum zoom position of ~0x8540
 
 ## Query
 Camera does not appear to respond to the `QUERY` command
+
+## Query Device Type
+Camera does not appear to respond to the `QUERY_DEVICE_TYPE` command

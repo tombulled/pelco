@@ -658,3 +658,9 @@ class SendCommandFactory:
             address=self.address,
             command_2=QUERY_DEVICE_TYPE,
         )
+
+    def query_diagnostic_information(self) -> SendCommandModel:
+        return SendCommandModel(
+            address=self.address,
+            command_2=QUERY_DIAGNOSTIC_INFORMATION,
+        )
