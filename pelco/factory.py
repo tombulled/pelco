@@ -570,11 +570,12 @@ class SendCommandFactory:
         # This command does not utilise the address field.
         # This is so that the address of a unit may be determined programatically.
         return SendCommandModel(
+            # address=self.address,
             command_1=query_type,
             command_2=QUERY,
         )
 
-    # ...
+    # TODO: preset_scan
 
     def set_zero_position(self) -> SendCommandModel:
         return SendCommandModel(
@@ -619,4 +620,10 @@ class SendCommandFactory:
             command_2=SET_ZOOM_POSITION,
             data_1=zoom_msb,
             data_2=zoom_lsb,
+        )
+
+    def query_pan_position(self) -> SendCommandModel:
+        return SendCommandModel(
+            address=self.address,
+            command_2=QUERY_PAN_POSITION,
         )

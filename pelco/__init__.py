@@ -3,7 +3,7 @@ import serial
 from .constants import *
 from .enums import FocusSpeed, PanSpeed, TiltSpeed, ZoomSpeed
 from .factory import SendCommandFactory
-from .models import GeneralResponse, SendCommandModel
+from .models import GeneralResponse, SendCommandModel, ExtendedResponse
 
 
 class Pelco:
@@ -266,7 +266,7 @@ class Pelco:
         # return self.s.read(18)
         raise NotImplementedError
 
-    # ...
+    # TODO: preset_scan
 
     def set_zero_position(self) -> GeneralResponse:
         return self.send_command(self.command_factory.set_zero_position())
@@ -279,3 +279,10 @@ class Pelco:
 
     def set_zoom_position(self, zoom_position: int) -> GeneralResponse:
         return self.send_command(self.command_factory.set_zoom_position(zoom_position))
+
+    def query_pan_position(self) -> ExtendedResponse:
+        command: SendCommandModel = self.command_factory.query_pan_position()
+
+        self.s.write(command.serialise())
+
+        return self.s.read(7)
