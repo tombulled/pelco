@@ -303,19 +303,19 @@ class Pelco:
     def query_pan_position(self) -> ExtendedResponse:
         return self.send_command_extended_response(
             self.command_factory.query_pan_position(),
-            expected_response_opcode=QUERY_PAN_POSITION_RESPONSE,
+            expected_response_opcode=D_EC_PAN_RESP,
         )
 
     def query_tilt_position(self) -> ExtendedResponse:
         return self.send_command_extended_response(
             self.command_factory.query_tilt_position(),
-            expected_response_opcode=QUERY_TILT_POSITION_RESPONSE,
+            expected_response_opcode=D_EC_TILT_RESP,
         )
 
     def query_zoom_position(self) -> ExtendedResponse:
         return self.send_command_extended_response(
             self.command_factory.query_zoom_position(),
-            expected_response_opcode=QUERY_ZOOM_POSITION_RESPONSE,
+            expected_response_opcode=D_EC_ZOOM_RESP,
         )
 
     # TODO: prepare_for_download
@@ -324,7 +324,7 @@ class Pelco:
     def query_magnification(self) -> ExtendedResponse:
         return self.send_command_extended_response(
             self.command_factory.query_magnification(),
-            expected_response_opcode=QUERY_MAGNIFICATION_RESPONSE,
+            expected_response_opcode=D_EC_MAG_RESP,
         )
 
     # TODO: activate_echo_mode
@@ -334,13 +334,13 @@ class Pelco:
     def query_device_type(self) -> ExtendedResponse:
         return self.send_command_extended_response(
             self.command_factory.query_device_type(),
-            expected_response_opcode=QUERY_DEVICE_TYPE_RESPONSE,
+            expected_response_opcode=D_EC_QUERY_DEV_TYPE_REP,
         )
 
     def query_diagnostic_information(self) -> ExtendedResponse:
         return self.send_command_extended_response(
             self.command_factory.query_diagnostic_information(),
-            expected_response_opcode=QUERY_DIAGNOSTIC_INFORMATION_RESPONSE,
+            expected_response_opcode=D_EC_QUERY_DIAG_RESP,
         )
 
     def version_information_macro(
@@ -368,3 +368,6 @@ class Pelco:
             self.command_factory.everest_macro(command, data_1=data_1, data_2=data_2),
             expected_response_opcode=expected_response_opcode,
         )
+    
+    # TODO: time_commands
+    # TODO: screen_move

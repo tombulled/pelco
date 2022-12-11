@@ -123,7 +123,7 @@ class SendCommandFactory:
 
         return SendCommandModel(
             address=self.address,
-            command_2=SET_PRESET,
+            command_2=D_EC_SET_PRESET,
             data_2=id,
         )
 
@@ -140,7 +140,7 @@ class SendCommandFactory:
 
         return SendCommandModel(
             address=self.address,
-            command_2=CLEAR_PRESET,
+            command_2=D_EC_CLEAR_PRESET,
             data_2=id,
         )
 
@@ -155,7 +155,7 @@ class SendCommandFactory:
 
         return SendCommandModel(
             address=self.address,
-            command_2=GO_TO_PRESET,
+            command_2=D_EC_MOVE_PRESET,
             data_2=id,
         )
 
@@ -170,7 +170,7 @@ class SendCommandFactory:
 
         return SendCommandModel(
             address=self.address,
-            command_2=SET_AUXILIARY,
+            command_2=D_EC_SET_AUX,
             data_2=aux_id,
         )
 
@@ -179,7 +179,7 @@ class SendCommandFactory:
 
         return SendCommandModel(
             address=self.address,
-            command_2=CLEAR_AUXILIARY,
+            command_2=D_EC_CLEAR_AUX,
             data_2=aux_id,
         )
 
@@ -201,7 +201,7 @@ class SendCommandFactory:
 
         return SendCommandModel(
             address=self.address,
-            command_2=REMOTE_RESET,
+            command_2=D_EC_RESET,
         )
 
     def set_zone_start(self, zone_id: int) -> SendCommandModel:
@@ -213,7 +213,7 @@ class SendCommandFactory:
 
         return SendCommandModel(
             address=self.address,
-            command_2=SET_ZONE_START,
+            command_2=D_EC_ZONE_START,
             data_2=zone_id,
         )
 
@@ -226,7 +226,7 @@ class SendCommandFactory:
 
         return SendCommandModel(
             address=self.address,
-            command_2=SET_ZONE_END,
+            command_2=D_EC_ZONE_END,
             data_2=zone_id,
         )
 
@@ -242,7 +242,7 @@ class SendCommandFactory:
 
         return SendCommandModel(
             address=self.address,
-            command_2=WRITE_CHARACTER_TO_SCREEN,
+            command_2=D_EC_WRITE_CHAR,
             data_1=screen_column,
             data_2=ascii_char,
         )
@@ -254,7 +254,7 @@ class SendCommandFactory:
 
         return SendCommandModel(
             address=self.address,
-            command_2=ZONE_SCAN_ON,
+            command_2=D_EC_ZONE_ON,
         )
 
     def zone_scan_off(self) -> SendCommandModel:
@@ -264,7 +264,7 @@ class SendCommandFactory:
 
         return SendCommandModel(
             address=self.address,
-            command_2=ZONE_SCAN_OFF,
+            command_2=D_EC_ZONE_OFF,
         )
 
     def set_pattern_start(self, pattern_id: int) -> SendCommandModel:
@@ -276,7 +276,7 @@ class SendCommandFactory:
 
         return SendCommandModel(
             address=self.address,
-            command_2=SET_PATTERN_START,
+            command_2=D_EC_START_RECORD,
             data_2=pattern_id,
         )
 
@@ -289,7 +289,7 @@ class SendCommandFactory:
 
         return SendCommandModel(
             address=self.address,
-            command_2=SET_PATTERN_STOP,
+            command_2=D_EC_END_RECORD,
             data_2=pattern_id,
         )
 
@@ -302,7 +302,7 @@ class SendCommandFactory:
 
         return SendCommandModel(
             address=self.address,
-            command_2=RUN_PATTERN,
+            command_2=D_EC_START_PLAY,
             data_2=pattern_id,
         )
 
@@ -315,7 +315,7 @@ class SendCommandFactory:
 
         return SendCommandModel(
             address=self.address,
-            command_2=SET_ZOOM_SPEED,
+            command_2=D_EC_ZOOM_SPEED,
             data_2=zoom_speed,
         )
 
@@ -328,7 +328,7 @@ class SendCommandFactory:
 
         return SendCommandModel(
             address=self.address,
-            command_2=SET_FOCUS_SPEED,
+            command_2=D_EC_FOCUS_SPEED,
             data_2=focus_speed,
         )
 
@@ -339,7 +339,7 @@ class SendCommandFactory:
 
         return SendCommandModel(
             address=self.address,
-            command_2=RESET_CAMERA_DEFAULTS,
+            command_2=D_EC_CAMERA_RESET,
         )
 
     def set_auto_focus_mode(self, auto_focus_mode: int) -> SendCommandModel:
@@ -351,7 +351,7 @@ class SendCommandFactory:
 
         return SendCommandModel(
             address=self.address,
-            command_2=AUTO_FOCUS_MODE,
+            command_2=D_EC_AUTO_FOCUS,
             data_2=auto_focus_mode,
         )
 
@@ -364,7 +364,7 @@ class SendCommandFactory:
 
         return SendCommandModel(
             address=self.address,
-            command_2=AUTO_IRIS_MODE,
+            command_2=D_EC_AUTO_IRIS,
             data_2=auto_iris_mode,
         )
 
@@ -377,7 +377,7 @@ class SendCommandFactory:
 
         return SendCommandModel(
             address=self.address,
-            command_2=AGC_MODE,
+            command_2=D_EC_AGC,
             data_2=agc_mode,
         )
 
@@ -396,7 +396,7 @@ class SendCommandFactory:
 
         return SendCommandModel(
             address=self.address,
-            command_2=BACKLIGHT_COMPENSATION,
+            command_2=D_EC_BLC,
             data_2=backlight_compensation_mode,
         )
 
@@ -415,14 +415,14 @@ class SendCommandFactory:
 
         return SendCommandModel(
             address=self.address,
-            command_2=AUTO_WHITE_BALANCE,
+            command_2=D_EC_AWB,
             data_2=auto_white_balance_mode,
         )
 
     def enable_device_phase_delay_mode(self) -> SendCommandModel:
         return SendCommandModel(
             address=self.address,
-            command_2=ENABLE_DEVICE_PHASE_DELAY_MODE,
+            command_2=D_EC_DEVICE_PHASE,
         )
 
     def set_shutter_speed(self, shutter_speed: int) -> SendCommandModel:
@@ -433,7 +433,7 @@ class SendCommandFactory:
 
         return SendCommandModel(
             address=self.address,
-            command_2=SET_SHUTTER_SPEED,
+            command_2=D_EC_SHUTTER_SPEED,
             data_1=shutter_speed_msb,
             data_2=shutter_speed_lsb,
         )
@@ -458,7 +458,7 @@ class SendCommandFactory:
         return SendCommandModel(
             address=self.address,
             command_1=line_lock_phase_delay_mode,
-            command_2=ADJUST_LINE_LOCK_PHASE_DELAY,
+            command_2=D_EC_ADJUST_PHASE,
             data_1=line_lock_phase_delay_msb,
             data_2=line_lock_phase_delay_lsb,
         )
@@ -477,7 +477,7 @@ class SendCommandFactory:
         return SendCommandModel(
             address=self.address,
             command_1=white_balance_mode,
-            command_2=ADJUST_WHITE_BALANCE_RB,
+            command_2=D_EC_ADJUST_RB_WB,
             data_1=white_balance_msb,
             data_2=white_balance_lsb,
         )
@@ -496,7 +496,7 @@ class SendCommandFactory:
         return SendCommandModel(
             address=self.address,
             command_1=white_balance_mode,
-            command_2=ADJUST_WHITE_BALANCE_MG,
+            command_2=D_EC_ADJUST_MG_WB,
             data_1=white_balance_msb,
             data_2=white_balance_lsb,
         )
@@ -511,7 +511,7 @@ class SendCommandFactory:
         return SendCommandModel(
             address=self.address,
             command_1=adjust_gain_mode,
-            command_2=ADJUST_GAIN,
+            command_2=D_EC_ADJUST_GAIN,
             data_1=adjust_gain_msb,
             data_2=adjust_gain_lsb,
         )
@@ -534,7 +534,7 @@ class SendCommandFactory:
         return SendCommandModel(
             address=self.address,
             command_1=auto_iris_level_mode,
-            command_2=ADJUST_AUTO_IRIS_LEVEL,
+            command_2=D_EC_ADJUST_AI_LEVEL,
             data_1=auto_iris_level_msb,
             data_2=auto_iris_level_lsb,
         )
@@ -559,7 +559,7 @@ class SendCommandFactory:
         return SendCommandModel(
             address=self.address,
             command_1=auto_iris_peak_value_mode,
-            command_2=ADJUST_AUTO_IRIS_PEAK_VALUE,
+            command_2=D_EC_ADJUST_AI_PEAK,
             data_1=auto_iris_peak_value_msb,
             data_2=auto_iris_peak_value_lsb,
         )
@@ -572,7 +572,7 @@ class SendCommandFactory:
         return SendCommandModel(
             # address=self.address,
             command_1=query_type,
-            command_2=QUERY,
+            command_2=D_EC_QUERY,
         )
 
     # TODO: preset_scan
@@ -580,7 +580,7 @@ class SendCommandFactory:
     def set_zero_position(self) -> SendCommandModel:
         return SendCommandModel(
             address=self.address,
-            command_2=SET_ZERO_POSITION,
+            command_2=D_EC_SET_ZERO,
         )
 
     def set_pan_position(self, pan_position: int) -> SendCommandModel:
@@ -591,7 +591,7 @@ class SendCommandFactory:
 
         return SendCommandModel(
             address=self.address,
-            command_2=SET_PAN_POSITION,
+            command_2=D_EC_SET_PAN,
             data_1=pan_msb,
             data_2=pan_lsb,
         )
@@ -604,7 +604,7 @@ class SendCommandFactory:
 
         return SendCommandModel(
             address=self.address,
-            command_2=SET_TILT_POSITION,
+            command_2=D_EC_SET_TILT,
             data_1=tilt_msb,
             data_2=tilt_lsb,
         )
@@ -617,7 +617,7 @@ class SendCommandFactory:
 
         return SendCommandModel(
             address=self.address,
-            command_2=SET_ZOOM_POSITION,
+            command_2=D_EC_ZOOM,
             data_1=zoom_msb,
             data_2=zoom_lsb,
         )
@@ -625,19 +625,19 @@ class SendCommandFactory:
     def query_pan_position(self) -> SendCommandModel:
         return SendCommandModel(
             address=self.address,
-            command_2=QUERY_PAN_POSITION,
+            command_2=D_EC_QUERY_PAN,
         )
 
     def query_tilt_position(self) -> SendCommandModel:
         return SendCommandModel(
             address=self.address,
-            command_2=QUERY_TILT_POSITION,
+            command_2=D_EC_QUERY_TILT,
         )
 
     def query_zoom_position(self) -> SendCommandModel:
         return SendCommandModel(
             address=self.address,
-            command_2=QUERY_ZOOM_POSITION,
+            command_2=D_EC_QUERY_ZOOM,
         )
 
     # TODO: prepare_for_download
@@ -646,7 +646,7 @@ class SendCommandFactory:
     def query_magnification(self) -> SendCommandModel:
         return SendCommandModel(
             address=self.address,
-            command_2=QUERY_MAGNIFICATION,
+            command_2=D_EC_QUERY_MAG,
         )
 
     # TODO: activate_echo_mode
@@ -656,13 +656,13 @@ class SendCommandFactory:
     def query_device_type(self) -> SendCommandModel:
         return SendCommandModel(
             address=self.address,
-            command_2=QUERY_DEVICE_TYPE,
+            command_2=D_EC_QUERY_DEV_TYPE,
         )
 
     def query_diagnostic_information(self) -> SendCommandModel:
         return SendCommandModel(
             address=self.address,
-            command_2=QUERY_DIAGNOSTIC_INFORMATION,
+            command_2=D_EC_QUERY_DIAG_INFO,
         )
 
     def version_information_macro(self, command: int) -> SendCommandModel:
@@ -671,7 +671,7 @@ class SendCommandFactory:
         return SendCommandModel(
             address=self.address,
             command_1=command,
-            command_2=VERSION_INFORMATION_MACRO_OPCODE,
+            command_2=D_EC_VERSION_INFO,
         )
 
     def everest_macro(self, command: int, *, data_1: int = 0x00, data_2: int = 0x00) -> SendCommandModel:
@@ -680,7 +680,10 @@ class SendCommandFactory:
         return SendCommandModel(
             address=self.address,
             command_1=command,
-            command_2=EVEREST_MACRO_OPCODE,
+            command_2=D_EC_EVEREST,
             data_1=data_1,
             data_2=data_2,
         )
+
+    # TODO: time_commands
+    # TODO: screen_move

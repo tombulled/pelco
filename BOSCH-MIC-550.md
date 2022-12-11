@@ -27,6 +27,10 @@ This command was likely introduced in a later version of Pelco-D.
 Camera does not appear to respond to the `QUERY_DIAGNOSTIC_INFORMATION` command.
 This command was likely introduced in a later version of Pelco-D.
 
-## Version Information
-Camera does not appear to respond to the `VERSION_INFORMATION` command.
+## Version Information Macro
+Camera does not appear to respond to the `VERSION_INFORMATION_MACRO` command.
+This command was likely introduced in a later version of Pelco-D.
+
+## Everest Macro
+Camera does not appear to respond to the `EVEREST_MACRO` command.
 This command was likely introduced in a later version of Pelco-D.
