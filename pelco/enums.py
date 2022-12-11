@@ -109,3 +109,17 @@ class AdjustAutoIrisLevelMode(IntEnum):
 class AdjustAutoIrisPeakValueMode(IntEnum):
     NEW: int = 0x00
     DELTA: int = 0x01
+
+
+class VersionInformationCommand(IntEnum):
+    SOFTWARE_VERSION_NUMBER: int = 0x00
+    BUILD_NUMBER: int = 0x02
+
+
+class VersionInformationResponse(IntEnum):
+    SOFTWARE_VERSION_NUMBER: int = 0x01
+    BUILD_NUMBER: int = 0x03
+
+    @classmethod
+    def for_command(cls, command: VersionInformationCommand) -> "VersionInformationResponse":
+        return cls(command + 1)

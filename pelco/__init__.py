@@ -1,7 +1,14 @@
 import serial
 
 from .constants import *
-from .enums import FocusSpeed, PanSpeed, TiltSpeed, ZoomSpeed
+from .enums import (
+    FocusSpeed,
+    PanSpeed,
+    TiltSpeed,
+    ZoomSpeed,
+    VersionInformationCommand,
+    VersionInformationResponse,
+)
 from .factory import SendCommandFactory
 from .models import GeneralResponse, SendCommandModel, ExtendedResponse
 
@@ -334,4 +341,16 @@ class Pelco:
         return self.send_command_extended_response(
             self.command_factory.query_diagnostic_information(),
             expected_response_opcode=QUERY_DIAGNOSTIC_INFORMATION_RESPONSE,
+        )
+
+    def version_information(
+        self, command: int = VersionInformationCommand.SOFTWARE_VERSION_NUMBER
+    ) -> ExtendedResponse:
+        expected_response_opcode: int = VersionInformationResponse.for_command(
+            VersionInformationCommand(command)
+        )
+
+        return self.send_command_extended_response(
+            self.command_factory.version_information(command),
+            expected_response_opcode=expected_response_opcode,
         )

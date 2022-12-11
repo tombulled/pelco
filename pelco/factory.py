@@ -664,3 +664,12 @@ class SendCommandFactory:
             address=self.address,
             command_2=QUERY_DIAGNOSTIC_INFORMATION,
         )
+
+    def version_information(self, command: int) -> SendCommandModel:
+        assert command in (0, 2) # TODO: Improve this assertion
+
+        return SendCommandModel(
+            address=self.address,
+            command_1=command,
+            command_2=VERSION_INFORMATION_MACRO_OPCODE,
+        )

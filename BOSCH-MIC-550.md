@@ -21,3 +21,6 @@ Camera does not appear to respond to the `QUERY` command
 
 ## Query Device Type
 Camera does not appear to respond to the `QUERY_DEVICE_TYPE` command
+
+## Query Diagnostic Information
+Camera does not appear to respond to the `QUERY_DIAGNOSTIC_INFORMATION` command
