@@ -627,3 +627,9 @@ class SendCommandFactory:
             address=self.address,
             command_2=QUERY_PAN_POSITION,
         )
+
+    def query_tilt_position(self) -> SendCommandModel:
+        return SendCommandModel(
+            address=self.address,
+            command_2=QUERY_TILT_POSITION,
+        )
