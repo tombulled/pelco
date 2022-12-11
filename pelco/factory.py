@@ -639,3 +639,12 @@ class SendCommandFactory:
             address=self.address,
             command_2=QUERY_ZOOM_POSITION,
         )
+
+    # TODO: prepare_for_download
+    # TODO: set_magnification
+
+    def query_magnification(self) -> SendCommandModel:
+        return SendCommandModel(
+            address=self.address,
+            command_2=QUERY_MAGNIFICATION,
+        )

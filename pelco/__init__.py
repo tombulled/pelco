@@ -310,3 +310,12 @@ class Pelco:
             self.command_factory.query_zoom_position(),
             expected_response_opcode=QUERY_ZOOM_POSITION_RESPONSE,
         )
+
+    # TODO: prepare_for_download
+    # TODO: set_magnification
+
+    def query_magnification(self) -> ExtendedResponse:
+        return self.send_command_extended_response(
+            self.command_factory.query_magnification(),
+            expected_response_opcode=QUERY_MAGNIFICATION_RESPONSE,
+        )
