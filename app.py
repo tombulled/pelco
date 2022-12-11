@@ -20,15 +20,17 @@ p = pelco.Pelco(
     port=device,
 )
 
+SPEED: int = 0x00
+
 commands = {
     "fn": lambda: p.focus_near(),  # focus near
     "ff": lambda: p.focus_far(),  # focus far
     "zt": lambda: p.zoom_tele(),  # zoom tele
     "zw": lambda: p.zoom_wide(),  # zoom wide
-    "u": lambda: p.tilt_up(),  # tilt up
-    "d": lambda: p.tilt_down(),  # tilt down
-    "l": lambda: p.pan_left(),  # pan left
-    "r": lambda: p.pan_right(),  # pan right
+    "u": lambda: p.tilt_up(SPEED),  # tilt up
+    "d": lambda: p.tilt_down(SPEED),  # tilt down
+    "l": lambda: p.pan_left(SPEED),  # pan left
+    "r": lambda: p.pan_right(SPEED),  # pan right
     "": lambda: p.stop(),  # stop
     "ws": lambda: p.set_auxiliary(1),  # start wiper
     "we": lambda: p.clear_auxiliary(1),  # stop wiper
