@@ -9,11 +9,11 @@ from .models import GeneralResponse, SendCommandModel
 class Pelco:
     address: int
 
-    def __init__(self, *, address: int = 0x01) -> None:
+    def __init__(self, *, address: int = 0x01, port: str = "/dev/ttyUSB0", baudrate: int = 2400) -> None:
         self.address = address
 
         self.command_factory = SendCommandFactory(address=address)
-        self.s = serial.Serial(port="/dev/ttyUSB0", baudrate=2400) #, timeout=1)
+        self.s = serial.Serial(port=port, baudrate=baudrate) #, timeout=1)
 
     def send_command(self, command: SendCommandModel, /) -> GeneralResponse:
         self.s.write(command.serialise())
