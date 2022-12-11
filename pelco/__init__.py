@@ -140,8 +140,11 @@ class Pelco:
     def go_to_zero_pan(self) -> GeneralResponse:
         return self.send_command(self.command_factory.go_to_zero_pan())
 
-    def set_auxiliary(self, aux_id: int) -> GeneralResponse:
-        return self.send_command(self.command_factory.set_auxiliary(aux_id))
+    def set_auxiliary_relay(self, aux_id: int) -> GeneralResponse:
+        return self.send_command(self.command_factory.set_auxiliary(D_ECS_SET_AUX_RELAY, aux_id))
+
+    def set_auxiliary_led(self, colour: int) -> GeneralResponse:
+        return self.send_command(self.command_factory.set_auxiliary(D_ECS_SET_AUX_LED, colour))
 
     def clear_auxiliary(self, aux_id: int) -> GeneralResponse:
         return self.send_command(self.command_factory.clear_auxiliary(aux_id))

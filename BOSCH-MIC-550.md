@@ -13,6 +13,9 @@
 | 0x07   | Not Set        |
 | 0x08   | Not Set        |
 
+## Presets
+Although up to 0xff supported in spec, MIC only supports up to 0x64 (100 presets)
+
 ## Zoom
 Camera appears to have a maximum zoom position of ~0x8540
 

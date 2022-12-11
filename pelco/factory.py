@@ -114,20 +114,20 @@ class SendCommandFactory:
             command_1=FOCUS_NEAR,
         )
 
-    def set_preset(self, id: int) -> SendCommandModel:
+    def set_preset(self, preset_id: int) -> SendCommandModel:
         """
         Set Preset (D_EC_SET_PRESET)
         """
 
-        assert MIN_PRESET <= id <= MAX_PRESET
+        assert MIN_PRESET_ID <= preset_id <= MAX_PRESET_ID
 
         return SendCommandModel(
             address=self.address,
             command_2=D_EC_SET_PRESET,
-            data_2=id,
+            data_2=preset_id,
         )
 
-    def clear_preset(self, id: int) -> SendCommandModel:
+    def clear_preset(self, preset_id: int) -> SendCommandModel:
         """
         Clear Preset (D_EC_CLEAR_PRESET)
 
@@ -136,27 +136,27 @@ class SendCommandFactory:
         It is not necessary to clear a preset before setting it.
         """
 
-        assert MIN_PRESET <= id <= MAX_PRESET
+        assert MIN_PRESET_ID <= preset_id <= MAX_PRESET_ID
 
         return SendCommandModel(
             address=self.address,
             command_2=D_EC_CLEAR_PRESET,
-            data_2=id,
+            data_2=preset_id,
         )
 
-    def go_to_preset(self, id: int) -> SendCommandModel:
+    def go_to_preset(self, preset_id: int) -> SendCommandModel:
         """
         Call Preset (D_EC_MOVE_PRESET)
 
         Causes the camera unit to move, at preset speed, to the requested position.
         """
 
-        assert MIN_PRESET <= id <= MAX_PRESET
+        assert MIN_PRESET_ID <= preset_id <= MAX_PRESET_ID
 
         return SendCommandModel(
             address=self.address,
             command_2=D_EC_MOVE_PRESET,
-            data_2=id,
+            data_2=preset_id,
         )
 
     def flip_180_about(self) -> SendCommandModel:
@@ -165,13 +165,26 @@ class SendCommandFactory:
     def go_to_zero_pan(self) -> SendCommandModel:
         return self.go_to_preset(PRESET_ZERO)
 
-    def set_auxiliary(self, aux_id: int) -> SendCommandModel:
+    def set_auxiliary_relay(self, aux_id: int) -> SendCommandModel:
         assert MIN_AUX_ID <= aux_id <= MAX_AUX_ID
 
         return SendCommandModel(
             address=self.address,
+            command_1=D_ECS_SET_AUX_RELAY,
             command_2=D_EC_SET_AUX,
             data_2=aux_id,
+        )
+
+    def set_auxiliary_led(self, led: int, rate: int) -> SendCommandModel:
+        assert BYTE_MIN <= led <= BYTE_MAX
+        assert BYTE_MIN <= rate <= BYTE_MAX
+
+        return SendCommandModel(
+            address=self.address,
+            command_1=D_ECS_SET_AUX_LED,
+            command_2=D_EC_SET_AUX,
+            data_1=rate,
+            data_2=led,
         )
 
     def clear_auxiliary(self, aux_id: int) -> SendCommandModel:
