@@ -9,16 +9,29 @@ from .models import GeneralResponse, SendCommandModel, ExtendedResponse
 class Pelco:
     address: int
 
-    def __init__(self, *, address: int = 0x01, port: str = "/dev/ttyUSB0", baudrate: int = 2400) -> None:
+    def __init__(
+        self, *, address: int = 0x01, port: str = "/dev/ttyUSB0", baudrate: int = 2400
+    ) -> None:
         self.address = address
 
         self.command_factory = SendCommandFactory(address=address)
-        self.s = serial.Serial(port=port, baudrate=baudrate) #, timeout=1)
+        self.s = serial.Serial(port=port, baudrate=baudrate)  # , timeout=1)
 
     def send_command(self, command: SendCommandModel, /) -> GeneralResponse:
         self.s.write(command.serialise())
 
         return GeneralResponse.deserialise(self.s.read(4))
+
+    def send_command_extended_response(
+        self, command: SendCommandModel, *, expected_response_opcode: int
+    ) -> ExtendedResponse:
+        self.s.write(command.serialise())
+
+        response: ExtendedResponse = ExtendedResponse.deserialise(self.s.read(7))
+
+        assert response.response_2 == expected_response_opcode
+
+        return response
 
     def camera_on(self) -> GeneralResponse:
         return self.send_command(self.command_factory.camera_on())
@@ -281,8 +294,7 @@ class Pelco:
         return self.send_command(self.command_factory.set_zoom_position(zoom_position))
 
     def query_pan_position(self) -> ExtendedResponse:
-        command: SendCommandModel = self.command_factory.query_pan_position()
-
-        self.s.write(command.serialise())
-
-        return ExtendedResponse.deserialise(self.s.read(7))
+        return self.send_command_extended_response(
+            self.command_factory.query_pan_position(),
+            expected_response_opcode=QUERY_PAN_POSITION_RESPONSE,
+        )
