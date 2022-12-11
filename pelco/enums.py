@@ -121,5 +121,7 @@ class VersionInformationResponse(IntEnum):
     BUILD_NUMBER: int = 0x03
 
     @classmethod
-    def for_command(cls, command: VersionInformationCommand) -> "VersionInformationResponse":
+    def for_command(
+        cls, command: VersionInformationCommand
+    ) -> "VersionInformationResponse":
         return cls(command + 1)

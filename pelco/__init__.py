@@ -343,7 +343,7 @@ class Pelco:
             expected_response_opcode=QUERY_DIAGNOSTIC_INFORMATION_RESPONSE,
         )
 
-    def version_information(
+    def version_information_macro(
         self, command: int = VersionInformationCommand.SOFTWARE_VERSION_NUMBER
     ) -> ExtendedResponse:
         expected_response_opcode: int = VersionInformationResponse.for_command(
@@ -351,6 +351,20 @@ class Pelco:
         )
 
         return self.send_command_extended_response(
-            self.command_factory.version_information(command),
+            self.command_factory.version_information_macro(command),
+            expected_response_opcode=expected_response_opcode,
+        )
+
+    def everest_macro(
+        self,
+        command: int,
+        data_1: int = 0x00,
+        data_2: int = 0x00,
+    ) -> ExtendedResponse:
+        # TODO: Some commands do not return a response. These need to be supported.
+        expected_response_opcode: int = command + 1
+
+        return self.send_command_extended_response(
+            self.command_factory.everest_macro(command, data_1=data_1, data_2=data_2),
             expected_response_opcode=expected_response_opcode,
         )

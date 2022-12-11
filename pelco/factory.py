@@ -665,11 +665,22 @@ class SendCommandFactory:
             command_2=QUERY_DIAGNOSTIC_INFORMATION,
         )
 
-    def version_information(self, command: int) -> SendCommandModel:
-        assert command in (0, 2) # TODO: Improve this assertion
+    def version_information_macro(self, command: int) -> SendCommandModel:
+        assert command in list(range(MIN_VERSION_INFORMATION_MACRO_SUB_OPCODE, MAX_VERSION_INFORMATION_MACRO_SUB_OPCODE + 1, 2))
 
         return SendCommandModel(
             address=self.address,
             command_1=command,
             command_2=VERSION_INFORMATION_MACRO_OPCODE,
+        )
+
+    def everest_macro(self, command: int, *, data_1: int = 0x00, data_2: int = 0x00) -> SendCommandModel:
+        assert command in list(range(MIN_EVEREST_MACRO_SUB_OPCODE, MAX_EVEREST_MACRO_SUB_OPCODE + 1, 2))
+
+        return SendCommandModel(
+            address=self.address,
+            command_1=command,
+            command_2=EVEREST_MACRO_OPCODE,
+            data_1=data_1,
+            data_2=data_2,
         )

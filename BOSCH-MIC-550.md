@@ -17,10 +17,16 @@
 Camera appears to have a maximum zoom position of ~0x8540
 
 ## Query
-Camera does not appear to respond to the `QUERY` command
+Camera does not appear to respond to the `QUERY` command.
 
 ## Query Device Type
-Camera does not appear to respond to the `QUERY_DEVICE_TYPE` command
+Camera does not appear to respond to the `QUERY_DEVICE_TYPE` command.
+This command was likely introduced in a later version of Pelco-D.
 
 ## Query Diagnostic Information
-Camera does not appear to respond to the `QUERY_DIAGNOSTIC_INFORMATION` command
+Camera does not appear to respond to the `QUERY_DIAGNOSTIC_INFORMATION` command.
+This command was likely introduced in a later version of Pelco-D.
+
+## Version Information
+Camera does not appear to respond to the `VERSION_INFORMATION` command.
+This command was likely introduced in a later version of Pelco-D.
