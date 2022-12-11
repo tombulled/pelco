@@ -648,3 +648,13 @@ class SendCommandFactory:
             address=self.address,
             command_2=QUERY_MAGNIFICATION,
         )
+
+    # TODO: activate_echo_mode
+    # TODO: set_remote_baud_rate
+    # TODO: start_download
+
+    def query_device_type(self) -> SendCommandModel:
+        return SendCommandModel(
+            address=self.address,
+            command_2=QUERY_DEVICE_TYPE,
+        )

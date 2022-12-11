@@ -319,3 +319,13 @@ class Pelco:
             self.command_factory.query_magnification(),
             expected_response_opcode=QUERY_MAGNIFICATION_RESPONSE,
         )
+
+    # TODO: activate_echo_mode
+    # TODO: set_remote_baud_rate
+    # TODO: start_download
+
+    def query_device_type(self) -> ExtendedResponse:
+        return self.send_command_extended_response(
+            self.command_factory.query_device_type(),
+            expected_response_opcode=QUERY_DEVICE_TYPE_RESPONSE,
+        )
