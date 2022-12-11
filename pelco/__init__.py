@@ -285,4 +285,4 @@ class Pelco:
 
         self.s.write(command.serialise())
 
-        return self.s.read(7)
+        return ExtendedResponse.deserialise(self.s.read(7))

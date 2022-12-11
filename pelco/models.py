@@ -114,12 +114,61 @@ class ExtendedResponse:
     data_2: int = 0x00  # DATA2
     checksum: int = 0x00  # CKSM
 
+    def serialise(self) -> bytearray:
+        return bytearray(
+            (
+                self.sync,
+                self.address,
+                self.response_1,
+                self.response_2,
+                self.data_1,
+                self.data_2,
+                self.checksum,
+            )
+        )
+
+    @classmethod
+    def deserialise(cls, response: bytes, /) -> "ExtendedResponse":
+        expected_response_length: int = 7
+        response_length: int = len(response)
+
+        if len(response) != expected_response_length:
+            raise ResponseError(
+                f"Expected response of length {expected_response_length}, got response of length {response_length}"
+            )
+
+        sync: int
+        address: int
+        response_1: int
+        response_2: int
+        data_1: int
+        data_2: int
+        checksum: int
+        sync, address, response_1, response_2, data_1, data_2, checksum = response
+
+        if sync != SYNC:
+            raise ResponseError(f"Invalid sync byte, expected {SYNC!r}, got {sync!r}")
+
+        # TODO: Check checksum here
+
+        model: ExtendedResponse = cls(
+            sync=sync,
+            address=address,
+            response_1=response_1,
+            response_2=response_2,
+            data_1=data_1,
+            data_2=data_2,
+            checksum=checksum,
+        )
+
+        return model
+
 
 @dataclass(frozen=True, eq=True)
 class QueryResponse:
     sync: int = SYNC  # SYNC
     address: int = 0x00  # ADDR
-    data_1: int = 0x00 # DATA1
+    data_1: int = 0x00  # DATA1
     # ...
-    data_15: int = 0x00 # DATA15
+    data_15: int = 0x00  # DATA15
     checksum: int = 0x00  # CKSM
