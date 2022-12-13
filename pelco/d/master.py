@@ -5,12 +5,12 @@ from .enums import (
     FocusSpeed,
     PanSpeed,
     TiltSpeed,
-    ZoomSpeed,
     VersionInformationCommand,
     VersionInformationResponse,
+    ZoomSpeed,
 )
 from .factory import SendCommandFactory
-from .models import GeneralResponse, SendCommandModel, ExtendedResponse
+from .models import ExtendedResponse, GeneralResponse, SendCommandModel
 
 
 class PelcoD:

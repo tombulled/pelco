@@ -127,34 +127,34 @@ class SendCommandFactory:
           QUERY DEFINED PRESETS RESPONSE.
 
         Presets can be moved to, set, or cleared.
-        
+
         When a move to preset command is received, the preset position stored for the preset number specified
         in the command is checked. If the position is not valid, the command is ignored. Otherwise the unit moves
         to the preset pan, tilt, zoom, and focus positions. Once the preset has been reached, the preset label is
         displayed on the second video line or where it has been moved through use of the SET 95 menu system.
-        
+
         If any command which causes motion is received during a move to preset, the move will be aborted and
         the new command will start. These commands are: a motion command, or another move to preset command,
         Also if the move is not completed within a timeout period, the move is aborted and motion is stopped.
-        
+
         When a SET PRESET command is received, the current pan, tilt, focus, and zoom positions are saved for
         the preset number specified in the command and the label for that preset becomes whatever is currently on
         the second video line.
-        
+
         Usually this command will cause the camera system to remember where it is currently pointing. Other
         times it will cause a specific action to occur. The most common of specific action is a menu call command
         with either SET PRESET 95 (or SET PRESET 28 in 32 preset mode).
-        
+
         Pre-assigned presets may not be used for position setting. If an attempt to do so is done, then the
         command is ignored with a General Reply being returned.
-        
+
             1. DATA2 This is the preset number. The range of this value is: 0x01 -> 0xFF, 1 -> 255. Different
         camera systems have differing number of preset numbers. Preset 0 is invalid.
-        
+
         Spectra III and ExSite saves in addition to the pan/tilt/zoom information for a preset through use of the
         menu system all items in the appropriate “preset camera setting screens”. A total of ten (10) presets may
         have this special capability. With the Spectra IV this capability has been increased to all available presets.
-        
+
         When the unit has a password enabled, this command will cause the unit to display the password request
         screen and not proceed until a correct password is entered. There is no way to enter a password directly via
         DProtocol.
@@ -720,7 +720,13 @@ class SendCommandFactory:
         )
 
     def version_information_macro(self, command: int) -> SendCommandModel:
-        assert command in list(range(MIN_VERSION_INFORMATION_MACRO_SUB_OPCODE, MAX_VERSION_INFORMATION_MACRO_SUB_OPCODE + 1, 2))
+        assert command in list(
+            range(
+                MIN_VERSION_INFORMATION_MACRO_SUB_OPCODE,
+                MAX_VERSION_INFORMATION_MACRO_SUB_OPCODE + 1,
+                2,
+            )
+        )
 
         return SendCommandModel(
             address=self.address,
@@ -728,8 +734,12 @@ class SendCommandFactory:
             command_2=D_EC_VERSION_INFO,
         )
 
-    def everest_macro(self, command: int, *, data_1: int = 0x00, data_2: int = 0x00) -> SendCommandModel:
-        assert command in list(range(MIN_EVEREST_MACRO_SUB_OPCODE, MAX_EVEREST_MACRO_SUB_OPCODE + 1, 2))
+    def everest_macro(
+        self, command: int, *, data_1: int = 0x00, data_2: int = 0x00
+    ) -> SendCommandModel:
+        assert command in list(
+            range(MIN_EVEREST_MACRO_SUB_OPCODE, MAX_EVEREST_MACRO_SUB_OPCODE + 1, 2)
+        )
 
         return SendCommandModel(
             address=self.address,

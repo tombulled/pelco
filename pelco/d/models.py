@@ -16,13 +16,15 @@ class SendCommandModel:
     # checksum: int = 0x00  # CKSM
 
     def calculate_crc(self) -> int:
-        return calculate_checksum((
-            self.address,
+        return calculate_checksum(
+            (
+                self.address,
                 self.command_1,
                 self.command_2,
                 self.data_1,
                 self.data_2,
-        ))
+            )
+        )
 
     def serialise(self) -> bytearray:
         return bytearray(

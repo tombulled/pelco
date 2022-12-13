@@ -1,6 +1,6 @@
 from typing import Sequence
 
-from .constants import BYTE_MIN, BYTE_MAX
+from .constants import BYTE_MAX, BYTE_MIN
 
 
 def calculate_checksum(bytes: Sequence[int], /) -> int:
