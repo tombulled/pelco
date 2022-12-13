@@ -1,2 +1,2 @@
 # pelco
-Pelco-D Protocol Implementation
+Pelco-D and Pelco-P Protocol Implementations

@@ -17,7 +17,7 @@ class Pelco:
     address: int
 
     def __init__(
-        self, *, address: int = 0x01, port: str = "/dev/ttyUSB0", baudrate: int = 2400
+        self, *, address: int = DEFAULT_ADDRESS, port: str = "/dev/ttyUSB0", baudrate: int = 2400
     ) -> None:
         self.address = address
 

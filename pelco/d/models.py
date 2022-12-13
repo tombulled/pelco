@@ -2,6 +2,7 @@ from dataclasses import dataclass
 
 from .constants import SYNC
 from .errors import ResponseError
+from .utils import calculate_checksum
 
 
 @dataclass(frozen=True, eq=True)
@@ -15,15 +16,13 @@ class SendCommandModel:
     # checksum: int = 0x00  # CKSM
 
     def calculate_crc(self) -> int:
-        return sum(
-            (
-                self.address,
+        return calculate_checksum((
+            self.address,
                 self.command_1,
                 self.command_2,
                 self.data_1,
                 self.data_2,
-            )
-        ) % (0xFF + 1)
+        ))
 
     def serialise(self) -> bytearray:
         return bytearray(
