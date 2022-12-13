@@ -337,7 +337,7 @@ class Pelco:
     def query_device_type(self) -> ExtendedResponse:
         return self.send_command_extended_response(
             self.command_factory.query_device_type(),
-            expected_response_opcode=D_EC_QUERY_DEV_TYPE_REP,
+            expected_response_opcode=D_EC_DEV_TYPE_REP,
         )
 
     def query_diagnostic_information(self) -> ExtendedResponse:

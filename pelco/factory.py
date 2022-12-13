@@ -116,7 +116,48 @@ class SendCommandFactory:
 
     def set_preset(self, preset_id: int) -> SendCommandModel:
         """
-        Set Preset (D_EC_SET_PRESET)
+        Command 0x03, Set Preset
+
+        * This command generates a "General Reply".
+        * Command Names as used by the Spectra IV software:
+            * 0x0003 SET_PRESET
+        * This command is used by the Endura/Atlas projects.
+        * This command is used and decoded on the: ERD97P21, Esprit 3012, Intercept and LRD.
+        * The defined presets may be determined by using QUERY DEFINED PRESETS and its reply of
+          QUERY DEFINED PRESETS RESPONSE.
+
+        Presets can be moved to, set, or cleared.
+        
+        When a move to preset command is received, the preset position stored for the preset number specified
+        in the command is checked. If the position is not valid, the command is ignored. Otherwise the unit moves
+        to the preset pan, tilt, zoom, and focus positions. Once the preset has been reached, the preset label is
+        displayed on the second video line or where it has been moved through use of the SET 95 menu system.
+        
+        If any command which causes motion is received during a move to preset, the move will be aborted and
+        the new command will start. These commands are: a motion command, or another move to preset command,
+        Also if the move is not completed within a timeout period, the move is aborted and motion is stopped.
+        
+        When a SET PRESET command is received, the current pan, tilt, focus, and zoom positions are saved for
+        the preset number specified in the command and the label for that preset becomes whatever is currently on
+        the second video line.
+        
+        Usually this command will cause the camera system to remember where it is currently pointing. Other
+        times it will cause a specific action to occur. The most common of specific action is a menu call command
+        with either SET PRESET 95 (or SET PRESET 28 in 32 preset mode).
+        
+        Pre-assigned presets may not be used for position setting. If an attempt to do so is done, then the
+        command is ignored with a General Reply being returned.
+        
+            1. DATA2 This is the preset number. The range of this value is: 0x01 -> 0xFF, 1 -> 255. Different
+        camera systems have differing number of preset numbers. Preset 0 is invalid.
+        
+        Spectra III and ExSite saves in addition to the pan/tilt/zoom information for a preset through use of the
+        menu system all items in the appropriate “preset camera setting screens”. A total of ten (10) presets may
+        have this special capability. With the Spectra IV this capability has been increased to all available presets.
+        
+        When the unit has a password enabled, this command will cause the unit to display the password request
+        screen and not proceed until a correct password is entered. There is no way to enter a password directly via
+        DProtocol.
         """
 
         assert MIN_PRESET_ID <= preset_id <= MAX_PRESET_ID
@@ -441,7 +482,7 @@ class SendCommandFactory:
     def set_shutter_speed(self, shutter_speed: int) -> SendCommandModel:
         assert MIN_SHUTTER_SPEED <= shutter_speed <= MAX_SHUTTER_SPEED
 
-        shutter_speed_msb: int = (shutter_speed >> BYTE) & BYTE_MAX
+        shutter_speed_msb: int = (shutter_speed >> BYTE_SIZE) & BYTE_MAX
         shutter_speed_lsb: int = shutter_speed & BYTE_MAX
 
         return SendCommandModel(
@@ -465,7 +506,7 @@ class SendCommandFactory:
             <= MAX_LINE_LOCK_PHASE_DELAY
         )
 
-        line_lock_phase_delay_msb: int = (line_lock_phase_delay >> BYTE) & BYTE_MAX
+        line_lock_phase_delay_msb: int = (line_lock_phase_delay >> BYTE_SIZE) & BYTE_MAX
         line_lock_phase_delay_lsb: int = line_lock_phase_delay & BYTE_MAX
 
         return SendCommandModel(
@@ -484,7 +525,7 @@ class SendCommandFactory:
         )
         assert MIN_WHITE_BALANCE_RB <= white_balance <= MAX_WHITE_BALANCE_RB
 
-        white_balance_msb: int = (white_balance >> BYTE) & BYTE_MAX
+        white_balance_msb: int = (white_balance >> BYTE_SIZE) & BYTE_MAX
         white_balance_lsb: int = white_balance & BYTE_MAX
 
         return SendCommandModel(
@@ -503,7 +544,7 @@ class SendCommandFactory:
         )
         assert MIN_WHITE_BALANCE_MG <= white_balance <= MAX_WHITE_BALANCE_MG
 
-        white_balance_msb: int = (white_balance >> BYTE) & BYTE_MAX
+        white_balance_msb: int = (white_balance >> BYTE_SIZE) & BYTE_MAX
         white_balance_lsb: int = white_balance & BYTE_MAX
 
         return SendCommandModel(
@@ -518,7 +559,7 @@ class SendCommandFactory:
         assert MIN_ADJUST_GAIN_MODE <= adjust_gain_mode <= MAX_ADJUST_GAIN_MODE
         assert MIN_ADJUST_GAIN <= adjust_gain <= MAX_ADJUST_GAIN
 
-        adjust_gain_msb: int = (adjust_gain >> BYTE) & BYTE_MAX
+        adjust_gain_msb: int = (adjust_gain >> BYTE_SIZE) & BYTE_MAX
         adjust_gain_lsb: int = adjust_gain & BYTE_MAX
 
         return SendCommandModel(
@@ -541,7 +582,7 @@ class SendCommandFactory:
             MIN_ADJUST_AUTO_IRIS_LEVEL <= auto_iris_level <= MAX_ADJUST_AUTO_IRIS_LEVEL
         )
 
-        auto_iris_level_msb: int = (auto_iris_level >> BYTE) & BYTE_MAX
+        auto_iris_level_msb: int = (auto_iris_level >> BYTE_SIZE) & BYTE_MAX
         auto_iris_level_lsb: int = auto_iris_level & BYTE_MAX
 
         return SendCommandModel(
@@ -566,7 +607,7 @@ class SendCommandFactory:
             <= MAX_ADJUST_AUTO_IRIS_PEAK_VALUE
         )
 
-        auto_iris_peak_value_msb: int = (auto_iris_peak_value >> BYTE) & BYTE_MAX
+        auto_iris_peak_value_msb: int = (auto_iris_peak_value >> BYTE_SIZE) & BYTE_MAX
         auto_iris_peak_value_lsb: int = auto_iris_peak_value & BYTE_MAX
 
         return SendCommandModel(
@@ -599,7 +640,7 @@ class SendCommandFactory:
     def set_pan_position(self, pan_position: int) -> SendCommandModel:
         assert MIN_PAN_POSITION <= pan_position <= MAX_PAN_POSITION
 
-        pan_msb: int = (pan_position >> BYTE) & BYTE_MAX
+        pan_msb: int = (pan_position >> BYTE_SIZE) & BYTE_MAX
         pan_lsb: int = pan_position & BYTE_MAX
 
         return SendCommandModel(
@@ -612,7 +653,7 @@ class SendCommandFactory:
     def set_tilt_position(self, tilt_position: int) -> SendCommandModel:
         assert MIN_TILT_POSITION <= tilt_position <= MAX_TILT_POSITION
 
-        tilt_msb: int = (tilt_position >> BYTE) & BYTE_MAX
+        tilt_msb: int = (tilt_position >> BYTE_SIZE) & BYTE_MAX
         tilt_lsb: int = tilt_position & BYTE_MAX
 
         return SendCommandModel(
@@ -625,7 +666,7 @@ class SendCommandFactory:
     def set_zoom_position(self, zoom_position: int) -> SendCommandModel:
         assert MIN_ZOOM_POSITION <= zoom_position <= MAX_ZOOM_POSITION
 
-        zoom_msb: int = (zoom_position >> BYTE) & BYTE_MAX
+        zoom_msb: int = (zoom_position >> BYTE_SIZE) & BYTE_MAX
         zoom_lsb: int = zoom_position & BYTE_MAX
 
         return SendCommandModel(

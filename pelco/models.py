@@ -56,6 +56,7 @@ class SendCommandModel:
         return model
 
 
+# aka. "General Reply"
 @dataclass(frozen=True, eq=True)
 class GeneralResponse:
     sync: int = SYNC  # SYNC
@@ -104,6 +105,7 @@ class GeneralResponse:
         return model
 
 
+# aka. "Extended Reply"
 @dataclass(frozen=True, eq=True)
 class ExtendedResponse:
     sync: int = SYNC  # SYNC
