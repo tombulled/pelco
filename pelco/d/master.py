@@ -24,6 +24,9 @@ class Pelco:
         self.command_factory = SendCommandFactory(address=address)
         self.s = serial.Serial(port=port, baudrate=baudrate)  # , timeout=1)
 
+    def __repr__(self) -> str:
+        return f"{type(self).__name__}(address={self.address})"
+
     def send_command(self, command: SendCommandModel, /) -> GeneralResponse:
         self.s.write(command.serialise())
 
