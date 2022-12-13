@@ -9,6 +9,7 @@ from .enums import (
     VersionInformationResponse,
     ZoomSpeed,
 )
+from .errors import ResponseError
 from .factory import SendCommandFactory
 from .models import ExtendedResponse, GeneralResponse, SendCommandModel
 
@@ -36,12 +37,20 @@ class PelcoD:
     def send(self, command: SendCommandModel, /) -> None:
         self.conn.write(command.serialise())
 
+    def read(self, size: int = 1, /) -> bytes:
+        response: bytes = self.conn.read(size)
+
+        if not response:
+            raise ResponseError("Timed out before receiving a response")
+
+        return response
+
     def send_command_general_response(
         self, command: SendCommandModel, /
     ) -> GeneralResponse:
         self.send(command)
 
-        return GeneralResponse.deserialise(self.conn.read(D_EC_GENERAL_REPLY_LENGTH))
+        return GeneralResponse.deserialise(self.read(D_EC_GENERAL_REPLY_LENGTH))
 
     def send_command_extended_response(
         self, command: SendCommandModel, *, expected_response_opcode: int
@@ -49,7 +58,7 @@ class PelcoD:
         self.send(command)
 
         response: ExtendedResponse = ExtendedResponse.deserialise(
-            self.conn.read(D_EC_EXTENDED_REPLY_LENGTH)
+            self.read(D_EC_EXTENDED_REPLY_LENGTH)
         )
 
         assert response.response_2 == expected_response_opcode
