@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from .constants import SYNC
 from .errors import ResponseError
@@ -60,10 +60,10 @@ class SendCommandModel:
 # aka. "General Reply"
 @dataclass(frozen=True, eq=True)
 class GeneralResponse:
-    sync: int = SYNC  # SYNC
+    sync: int = field(default=SYNC, repr=False)  # SYNC
     address: int = 0x00  # ADDR
     alarms: int = 0x00  # ALARMS
-    checksum: int = 0x00  # CKSM
+    checksum: int = field(default=0x00, repr=False)  # CKSM
 
     def serialise(self) -> bytearray:
         return bytearray(
@@ -109,13 +109,13 @@ class GeneralResponse:
 # aka. "Extended Reply"
 @dataclass(frozen=True, eq=True)
 class ExtendedResponse:
-    sync: int = SYNC  # SYNC
+    sync: int = field(default=SYNC, repr=False)  # SYNC
     address: int = 0x00  # ADDR
     response_1: int = 0x00  # RESP1
     response_2: int = 0x00  # RESP2
     data_1: int = 0x00  # DATA1
     data_2: int = 0x00  # DATA2
-    checksum: int = 0x00  # CKSM
+    checksum: int = field(default=0x00, repr=False)  # CKSM
 
     def serialise(self) -> bytearray:
         return bytearray(
@@ -169,9 +169,9 @@ class ExtendedResponse:
 
 @dataclass(frozen=True, eq=True)
 class QueryResponse:
-    sync: int = SYNC  # SYNC
+    sync: int = field(default=SYNC, repr=False)  # SYNC
     address: int = 0x00  # ADDR
     data_1: int = 0x00  # DATA1
     # ...
     data_15: int = 0x00  # DATA15
-    checksum: int = 0x00  # CKSM
+    checksum: int = field(default=0x00, repr=False)  # CKSM
