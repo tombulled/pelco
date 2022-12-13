@@ -1,6 +1,9 @@
 import serial.tools.list_ports
 
 import pelco
+import pelco.d
+import pelco.p
+from pelco.d.master import Pelco
 
 
 def get_device() -> str:
@@ -15,7 +18,7 @@ def get_device() -> str:
 
 device: str = get_device()
 
-p = pelco.Pelco(
+p = Pelco(
     address=0x02,
     port=device,
 )
