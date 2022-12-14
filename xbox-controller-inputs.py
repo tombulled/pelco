@@ -34,7 +34,8 @@ class Axis(StrEnum):
     RIGHT_TRIGGER: str = "ABS_RZ"
 
 
-SPEED_MAX: int = 2**6
+# SPEED_MAX: int = 2**6
+SPEED_MAX: int = 0xF
 TRIGGER_MAX: int = 2**10
 STICK_MAX: int = 2**15
 STICK_THRESHOLD: float = 0.1 # ignore the first 10%
