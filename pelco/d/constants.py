@@ -1,6 +1,6 @@
 from typing import Final
 
-BYTE_SIZE: Final[int] = 8  # Number of bits in a byte
+BYTE_SIZE: Final[int] = 8
 BYTE_MIN: Final[int] = 0x00
 BYTE_MAX: Final[int] = 0xFF
 
@@ -185,7 +185,7 @@ D_ECS_DELETE_PATTERN: Final[int] = 0x07
 D_ECS_SET_MAN_PAN_LEFT_LIMIT: Final[int] = 0x08
 D_ECS_SET_MAN_PAN_RIGHT_LIMIT: Final[int] = 0x09
 D_ECS_SET_SCAN_PAN_LEFT_LIMIT: Final[int] = 0x0A
-D_ECS_SET_SCAN_PAN_RIGHT_LIMIT: Final[int] = 0xB
+D_ECS_SET_SCAN_PAN_RIGHT_LIMIT: Final[int] = 0x0B
 D_ECS_EVEREST_LIMIT_QRY: Final[int] = 0x0C
 D_ECS_EVEREST_LIMIT_RSP: Final[int] = 0x0D
 D_ECS_EVEREST_ENABLE_LIMITS: Final[int] = 0x0E
