@@ -1,15 +1,7 @@
 from enum import IntEnum, Enum, auto
+import serial.tools.list_ports
 import pygame
-
-# Initialise pygame
-pygame.init()
-
-joysticks = [
-    pygame.joystick.Joystick(index) for index in range(pygame.joystick.get_count())
-]
-
-# Ensure XBox Controller connected
-assert joysticks and joysticks[0].get_name() == "Xbox One S Controller"
+from pelco.d.master import PelcoD
 
 
 class Event(Enum):
@@ -48,20 +40,43 @@ class Hat(IntEnum):
     DIRECTIONAL_PAD: int = 0
 
 
+# Initialise pygame
+pygame.init()
+
+joysticks = [
+    pygame.joystick.Joystick(index) for index in range(pygame.joystick.get_count())
+]
+
+# Ensure XBox Controller connected
+assert joysticks and joysticks[0].get_name() == "Xbox One S Controller"
+
+
+def get_device() -> str:
+    comports = serial.tools.list_ports.comports()
+
+    for comport in comports:
+        if comport.product == "FT232R USB UART":
+            return comport.device
+
+    raise Exception("Failed to find serial device")
+
+
+camera = PelcoD(
+    address=0x02,
+    port=get_device(),
+)
+
+
 while True:
     for event in pygame.event.get():
         if event.type == pygame.JOYBUTTONDOWN:
             button: Button = Button(event.button)
 
-            print(
-                f"Button Down: {button.name}"
-            )
+            print(f"Button Down: {button.name}")
         elif event.type == pygame.JOYBUTTONUP:
             button: Button = Button(event.button)
 
-            print(
-                f"Button Up: {button.name}"
-            )
+            print(f"Button Up: {button.name}")
         elif event.type == pygame.JOYHATMOTION:
             hat: Hat = Hat(event.hat)
 
@@ -86,27 +101,20 @@ while True:
             else:
                 hm = "Unknown"
 
-            print(
-                f"Joystick Hat Motion: {hat.name} -> {event.value}"
-            )
+            print(f"Joystick Hat Motion: {hat.name} -> {event.value}")
         elif event.type == pygame.JOYAXISMOTION:
             axis: Axis = Axis(event.axis)
 
-            print(
-                f"Joystick Axis Motion: {axis.name} -> {event.value}"
-            )
+            print(f"Joystick Axis Motion: {axis.name} -> {event.value}")
         elif event.type == pygame.JOYDEVICEADDED:
             joystick = pygame.joystick.Joystick(event.device_index)
             joysticks[joystick.get_instance_id()] = joystick
 
-            print(
-                f"Joystick Added: {joystick.get_name()}"
-            )
+            print(f"Joystick Added: {joystick.get_name()}")
         elif event.type == pygame.JOYDEVICEREMOVED:
             joystick = joysticks[event.instance_id]
+            del joysticks[event.instance_id]
 
-            print(
-                f"Joystick Removed: {joystick.get_name()}"
-            )
+            print(f"Joystick Removed: {joystick.get_name()}")
         else:
             continue

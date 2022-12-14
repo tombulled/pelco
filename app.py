@@ -15,12 +15,9 @@ def get_device() -> str:
 
     raise Exception("Failed to find serial device")
 
-
-device: str = get_device()
-
 p = PelcoD(
     address=0x02,
-    port=device,
+    port=get_device(),
 )
 
 SPEED: int = 0x00
