@@ -1,5 +1,4 @@
 from enum import IntEnum, Enum, auto
-import serial.tools.list_ports
 import pygame
 from pelco.d.master import PelcoD
 
@@ -49,22 +48,6 @@ joysticks = [
 
 # Ensure XBox Controller connected
 assert joysticks and joysticks[0].get_name() == "Xbox One S Controller"
-
-
-def get_device() -> str:
-    comports = serial.tools.list_ports.comports()
-
-    for comport in comports:
-        if comport.product == "FT232R USB UART":
-            return comport.device
-
-    raise Exception("Failed to find serial device")
-
-
-camera = PelcoD(
-    address=0x02,
-    port=get_device(),
-)
 
 
 while True:
