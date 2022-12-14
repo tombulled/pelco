@@ -34,8 +34,10 @@ class Axis(StrEnum):
     RIGHT_TRIGGER: str = "ABS_RZ"
 
 
+SPEED_MAX: int = 2**6
 TRIGGER_MAX: int = 2**10
 STICK_MAX: int = 2**15
+STICK_THRESHOLD: float = 0.1 # ignore the first 10%
 
 
 def get_xbox_controller():
@@ -44,6 +46,7 @@ def get_xbox_controller():
             return device
 
     raise Exception("Failed to find XBox Controller")
+
 
 def get_serial_device() -> str:
     comports = serial.tools.list_ports.comports()
@@ -54,6 +57,7 @@ def get_serial_device() -> str:
 
     raise Exception("Failed to find serial device")
 
+
 camera = PelcoD(
     address=0x02,
     port=get_serial_device(),
@@ -62,6 +66,19 @@ camera = PelcoD(
 xbox_controller = get_xbox_controller()
 
 DEFAULT_SPEED: int = 0x10
+
+def stick_value_to_speed(stick_value: int, /) -> int:
+    normalised_value: float = stick_value / STICK_MAX
+
+    if abs(normalised_value) <= STICK_THRESHOLD:
+        normalised_value = 0
+    else:
+        if normalised_value > 0:
+            normalised_value = (normalised_value-STICK_THRESHOLD)/(1-STICK_THRESHOLD)
+        else:
+            normalised_value = (normalised_value+STICK_THRESHOLD)/(1-STICK_THRESHOLD)
+
+    return round(normalised_value * SPEED_MAX)
 
 while True:
     for event in xbox_controller.read():
@@ -74,6 +91,9 @@ while True:
                 print(f"Button Down: {button.name}")
             else:
                 print(f"Button Up: {button.name}")
+
+                if button is Button.MENU:
+                    camera.set_preset(95)
 
         # Hat/Axis Motion Event
         elif event.ev_type == "Absolute":
@@ -103,4 +123,23 @@ while True:
                         print("Stopping Tilting")
                         camera.stop()
             else:
-                print(f"Axis Motion: {axis.name} -> {event.state}")
+                # print(f"Axis Motion: {axis.name} -> {event.state}")
+
+                if axis is Axis.LEFT_STICK_X:
+                    speed: int = stick_value_to_speed(event.state)
+
+                    if speed > 0:
+                        print(f"Panning Right (speed={speed})")
+                    elif speed < 0:
+                        print(f"Panning Left (speed={abs(speed)})")
+                    else:
+                        print("Stopping Panning")
+                elif axis is Axis.RIGHT_STICK_Y:
+                    speed: int = stick_value_to_speed(event.state)
+
+                    if speed > 0:
+                        print(f"Tilting Down (speed={speed})")
+                    elif speed < 0:
+                        print(f"Tilting Up (speed={abs(speed)})")
+                    else:
+                        print("Stopping Tilting")
