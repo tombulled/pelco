@@ -130,16 +130,22 @@ while True:
 
                     if speed > 0:
                         print(f"Panning Right (speed={speed})")
+                        camera.pan_right(speed)
                     elif speed < 0:
                         print(f"Panning Left (speed={abs(speed)})")
+                        camera.pan_left(abs(speed))
                     else:
                         print("Stopping Panning")
+                        camera.stop()
                 elif axis is Axis.RIGHT_STICK_Y:
                     speed: int = stick_value_to_speed(event.state)
 
                     if speed > 0:
                         print(f"Tilting Down (speed={speed})")
+                        camera.tilt_down(speed)
                     elif speed < 0:
                         print(f"Tilting Up (speed={abs(speed)})")
+                        camera.tilt_up(abs(speed))
                     else:
                         print("Stopping Tilting")
+                        camera.stop()
