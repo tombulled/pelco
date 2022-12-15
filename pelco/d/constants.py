@@ -1,12 +1,18 @@
 from typing import Final
 
-BYTE_SIZE: Final[int] = 8
-BYTE_MIN: Final[int] = 0x00
-BYTE_MAX: Final[int] = 0xFF
+UINT8_SIZE: Final[int] = 8
+UINT8_MIN: Final[int] = 0x00
+UINT8_MAX: Final[int] = 0xFF
+
+UINT16_SIZE: Final[int] = 16
+UINT16_MIN: Final[int] = 0x00
+UINT16_MAX: Final[int] = 0xFFFF
 
 DEFAULT_ADDRESS: Final[int] = 0x01
 
 SYNC: Final[int] = 0xFF
+
+UNSET: Final[int] = 0x00
 
 MIN_ADDRESS: Final[int] = 0x01
 MAX_ADDRESS: Final[int] = 0xFF

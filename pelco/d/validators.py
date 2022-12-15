@@ -1,6 +1,6 @@
 from .constants import (
-    BYTE_MAX,
-    BYTE_MIN,
+    UINT8_MAX,
+    UINT8_MIN,
     MAX_ADDRESS,
     MAX_AUX_ID,
     MAX_FOCUS_SPEED,
@@ -21,8 +21,20 @@ from .constants import (
     MIN_TILT_SPEED,
     MIN_ZONE_ID,
     MIN_ZOOM_SPEED,
+    UINT16_MIN,
+    UINT16_MAX,
 )
 from .errors import ValidationError
+
+
+def validate_odd(value: int, /) -> None:
+    if value % 2 == 0:
+        raise ValidationError(f"Value {value} is not odd")
+
+
+def validate_even(value: int, /) -> None:
+    if value % 2 == 1:
+        raise ValidationError(f"Value {value} is not even")
 
 
 def validate_in_range(value: int, minimum: int, maximum: int) -> None:
@@ -57,14 +69,18 @@ def validate_not_all(**values: bool) -> None:
         raise ValidationError(f"{keys} cannot {collective}{collective and ' '}be True")
 
 
-def validate_byte(value: int, /) -> None:
-    validate_in_range(value, BYTE_MIN, BYTE_MAX)
+def validate_uint8(value: int, /) -> None:
+    validate_in_range(value, UINT8_MIN, UINT8_MAX)
 
 
-def validate_bytes(*values: int) -> None:
+def validate_uint16(value: int, /) -> None:
+    validate_in_range(value, UINT16_MIN, UINT16_MAX)
+
+
+def validate_all_uint8(*values: int) -> None:
     value: int
     for value in values:
-        validate_byte(value)
+        validate_uint8(value)
 
 
 def validate_address(value: int, /) -> None:

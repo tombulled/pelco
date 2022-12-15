@@ -1,6 +1,6 @@
 from typing import Sequence
 
-from .constants import BYTE_MAX, BYTE_MIN
+from .constants import UINT8_MAX, UINT8_MIN
 
 
 def calculate_checksum(bytes: Sequence[int], /) -> int:
@@ -8,8 +8,8 @@ def calculate_checksum(bytes: Sequence[int], /) -> int:
 
     byte: int
     for byte in bytes:
-        assert BYTE_MIN <= byte <= BYTE_MAX
+        assert UINT8_MIN <= byte <= UINT8_MAX
 
         checksum += byte
 
-    return checksum % (BYTE_MAX + 1)
+    return checksum % (UINT8_MAX + 1)

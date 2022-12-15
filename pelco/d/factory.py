@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 
 from .constants import (
-    BYTE_MAX,
-    BYTE_SIZE,
+    UINT8_MAX,
+    UINT8_SIZE,
     D_C_CAMERA,
     D_C_DOWN,
     D_C_FOCUS_FAR,
@@ -112,13 +112,16 @@ from .constants import (
     MIN_ZOOM_POSITION,
     PRESET_FLIP,
     PRESET_ZERO,
+    UNSET,
 )
 from .models import SendCommandModel
 from .validators import (
     validate_address,
     validate_aux_id,
-    validate_byte,
-    validate_bytes,
+    validate_odd,
+    validate_uint16,
+    validate_uint8,
+    validate_all_uint8,
     validate_focus_speed,
     validate_not_all,
     validate_pan_speed,
@@ -142,12 +145,12 @@ class CommandFactory:
 
     def _command(
         self,
-        command_1: int = 0x00,
-        command_2: int = 0x00,
-        data_1: int = 0x00,
-        data_2: int = 0x00,
+        command_1: int = UNSET,
+        command_2: int = UNSET,
+        data_1: int = UNSET,
+        data_2: int = UNSET,
     ) -> SendCommandModel:
-        validate_bytes(command_1, command_2, data_1, data_2)
+        validate_all_uint8(command_1, command_2, data_1, data_2)
 
         return SendCommandModel(
             address=self.address,
@@ -176,13 +179,13 @@ class CommandFactory:
         pan_speed: int = 0,
         tilt_speed: int = 0,
     ) -> SendCommandModel:
-        validate_pan_speed(pan_speed)
-        validate_tilt_speed(tilt_speed)
         validate_not_all(iris_close=iris_close, iris_open=iris_open)
         validate_not_all(focus_near=focus_near, focus_far=focus_far)
         validate_not_all(zoom_wide=zoom_wide, zoom_tele=zoom_tele)
         validate_not_all(up=up, down=down)
         validate_not_all(left=left, right=right)
+        validate_pan_speed(pan_speed)
+        validate_tilt_speed(tilt_speed)
 
         command_1: int = int(
             (sense and D_C_SENSE)
@@ -207,6 +210,27 @@ class CommandFactory:
             command_2=command_2,
             data_1=pan_speed,
             data_2=tilt_speed,
+        )
+
+    def extended(
+        self,
+        opcode: int,
+        sub_opcode: int = UNSET,
+        data: int = UNSET,
+    ):
+        validate_uint8(opcode)
+        validate_odd(opcode)
+        validate_uint8(sub_opcode)
+        validate_uint16(data)
+
+        data_1: int = (data >> UINT8_SIZE) & UINT8_MAX
+        data_2: int = data & UINT8_MAX
+
+        return self._command(
+            command_1=sub_opcode,
+            command_2=opcode,
+            data_1=data_1,
+            data_2=data_2,
         )
 
     def stop(self) -> SendCommandModel:
@@ -257,10 +281,7 @@ class CommandFactory:
     def set_preset(self, preset_id: int) -> SendCommandModel:
         validate_preset_id(preset_id)
 
-        return self._command(
-            command_2=D_EC_SET_PRESET,
-            data_2=preset_id,
-        )
+        return self.extended(D_EC_SET_PRESET, data=preset_id)
 
     def clear_preset(self, preset_id: int) -> SendCommandModel:
         """
@@ -271,10 +292,7 @@ class CommandFactory:
 
         validate_preset_id(preset_id)
 
-        return self._command(
-            command_2=D_EC_CLEAR_PRESET,
-            data_2=preset_id,
-        )
+        return self.extended(D_EC_CLEAR_PRESET, data=preset_id)
 
     def go_to_preset(self, preset_id: int) -> SendCommandModel:
         """
@@ -283,10 +301,7 @@ class CommandFactory:
 
         validate_preset_id(preset_id)
 
-        return self._command(
-            command_2=D_EC_MOVE_PRESET,
-            data_2=preset_id,
-        )
+        return self.extended(D_EC_MOVE_PRESET, data=preset_id)
 
     def flip_180_about(self) -> SendCommandModel:
         return self.go_to_preset(PRESET_FLIP)
@@ -304,8 +319,8 @@ class CommandFactory:
         )
 
     def set_auxiliary_led(self, led: int, rate: int) -> SendCommandModel:
-        validate_byte(led)
-        validate_byte(rate)
+        validate_uint8(led)
+        validate_uint8(rate)
 
         return self._command(
             command_1=D_ECS_SET_AUX_LED,
@@ -355,7 +370,7 @@ class CommandFactory:
         self, screen_column: int, ascii_char: int
     ) -> SendCommandModel:
         validate_screen_column(screen_column)
-        validate_byte(ascii_char)
+        validate_uint8(ascii_char)
 
         return self._command(
             command_2=D_EC_WRITE_CHAR,
@@ -478,8 +493,8 @@ class CommandFactory:
     def set_shutter_speed(self, shutter_speed: int) -> SendCommandModel:
         assert MIN_SHUTTER_SPEED <= shutter_speed <= MAX_SHUTTER_SPEED
 
-        shutter_speed_msb: int = (shutter_speed >> BYTE_SIZE) & BYTE_MAX
-        shutter_speed_lsb: int = shutter_speed & BYTE_MAX
+        shutter_speed_msb: int = (shutter_speed >> UINT8_SIZE) & UINT8_MAX
+        shutter_speed_lsb: int = shutter_speed & UINT8_MAX
 
         return self._command(
             command_2=D_EC_SHUTTER_SPEED,
@@ -501,8 +516,10 @@ class CommandFactory:
             <= MAX_LINE_LOCK_PHASE_DELAY
         )
 
-        line_lock_phase_delay_msb: int = (line_lock_phase_delay >> BYTE_SIZE) & BYTE_MAX
-        line_lock_phase_delay_lsb: int = line_lock_phase_delay & BYTE_MAX
+        line_lock_phase_delay_msb: int = (
+            line_lock_phase_delay >> UINT8_SIZE
+        ) & UINT8_MAX
+        line_lock_phase_delay_lsb: int = line_lock_phase_delay & UINT8_MAX
 
         return self._command(
             command_1=line_lock_phase_delay_mode,
@@ -519,8 +536,8 @@ class CommandFactory:
         )
         assert MIN_WHITE_BALANCE_RB <= white_balance <= MAX_WHITE_BALANCE_RB
 
-        white_balance_msb: int = (white_balance >> BYTE_SIZE) & BYTE_MAX
-        white_balance_lsb: int = white_balance & BYTE_MAX
+        white_balance_msb: int = (white_balance >> UINT8_SIZE) & UINT8_MAX
+        white_balance_lsb: int = white_balance & UINT8_MAX
 
         return self._command(
             command_1=white_balance_mode,
@@ -537,8 +554,8 @@ class CommandFactory:
         )
         assert MIN_WHITE_BALANCE_MG <= white_balance <= MAX_WHITE_BALANCE_MG
 
-        white_balance_msb: int = (white_balance >> BYTE_SIZE) & BYTE_MAX
-        white_balance_lsb: int = white_balance & BYTE_MAX
+        white_balance_msb: int = (white_balance >> UINT8_SIZE) & UINT8_MAX
+        white_balance_lsb: int = white_balance & UINT8_MAX
 
         return self._command(
             command_1=white_balance_mode,
@@ -551,8 +568,8 @@ class CommandFactory:
         assert MIN_ADJUST_GAIN_MODE <= adjust_gain_mode <= MAX_ADJUST_GAIN_MODE
         assert MIN_ADJUST_GAIN <= adjust_gain <= MAX_ADJUST_GAIN
 
-        adjust_gain_msb: int = (adjust_gain >> BYTE_SIZE) & BYTE_MAX
-        adjust_gain_lsb: int = adjust_gain & BYTE_MAX
+        adjust_gain_msb: int = (adjust_gain >> UINT8_SIZE) & UINT8_MAX
+        adjust_gain_lsb: int = adjust_gain & UINT8_MAX
 
         return self._command(
             command_1=adjust_gain_mode,
@@ -573,8 +590,8 @@ class CommandFactory:
             MIN_ADJUST_AUTO_IRIS_LEVEL <= auto_iris_level <= MAX_ADJUST_AUTO_IRIS_LEVEL
         )
 
-        auto_iris_level_msb: int = (auto_iris_level >> BYTE_SIZE) & BYTE_MAX
-        auto_iris_level_lsb: int = auto_iris_level & BYTE_MAX
+        auto_iris_level_msb: int = (auto_iris_level >> UINT8_SIZE) & UINT8_MAX
+        auto_iris_level_lsb: int = auto_iris_level & UINT8_MAX
 
         return self._command(
             command_1=auto_iris_level_mode,
@@ -597,8 +614,8 @@ class CommandFactory:
             <= MAX_ADJUST_AUTO_IRIS_PEAK_VALUE
         )
 
-        auto_iris_peak_value_msb: int = (auto_iris_peak_value >> BYTE_SIZE) & BYTE_MAX
-        auto_iris_peak_value_lsb: int = auto_iris_peak_value & BYTE_MAX
+        auto_iris_peak_value_msb: int = (auto_iris_peak_value >> UINT8_SIZE) & UINT8_MAX
+        auto_iris_peak_value_lsb: int = auto_iris_peak_value & UINT8_MAX
 
         return self._command(
             command_1=auto_iris_peak_value_mode,
@@ -628,8 +645,8 @@ class CommandFactory:
     def set_pan_position(self, pan_position: int) -> SendCommandModel:
         assert MIN_PAN_POSITION <= pan_position <= MAX_PAN_POSITION
 
-        pan_msb: int = (pan_position >> BYTE_SIZE) & BYTE_MAX
-        pan_lsb: int = pan_position & BYTE_MAX
+        pan_msb: int = (pan_position >> UINT8_SIZE) & UINT8_MAX
+        pan_lsb: int = pan_position & UINT8_MAX
 
         return self._command(
             command_2=D_EC_SET_PAN,
@@ -640,8 +657,8 @@ class CommandFactory:
     def set_tilt_position(self, tilt_position: int) -> SendCommandModel:
         assert MIN_TILT_POSITION <= tilt_position <= MAX_TILT_POSITION
 
-        tilt_msb: int = (tilt_position >> BYTE_SIZE) & BYTE_MAX
-        tilt_lsb: int = tilt_position & BYTE_MAX
+        tilt_msb: int = (tilt_position >> UINT8_SIZE) & UINT8_MAX
+        tilt_lsb: int = tilt_position & UINT8_MAX
 
         return self._command(
             command_2=D_EC_SET_TILT,
@@ -652,8 +669,8 @@ class CommandFactory:
     def set_zoom_position(self, zoom_position: int) -> SendCommandModel:
         assert MIN_ZOOM_POSITION <= zoom_position <= MAX_ZOOM_POSITION
 
-        zoom_msb: int = (zoom_position >> BYTE_SIZE) & BYTE_MAX
-        zoom_lsb: int = zoom_position & BYTE_MAX
+        zoom_msb: int = (zoom_position >> UINT8_SIZE) & UINT8_MAX
+        zoom_lsb: int = zoom_position & UINT8_MAX
 
         return self._command(
             command_2=D_EC_ZOOM,
