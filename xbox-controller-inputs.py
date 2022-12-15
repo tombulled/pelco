@@ -1,10 +1,10 @@
 from typing import Callable
-from xboxonecontroller.discovery import find_controllers
-from xboxonecontroller.enums import Button, Axis, EventType
 
 import serial.tools.list_ports
-from pelco.d.master import PelcoD
 
+from pelco.d.master import PelcoD
+from xboxonecontroller.discovery import find_controllers
+from xboxonecontroller.enums import Axis, Button, EventType
 
 # SPEED_MAX: int = 2**6
 SPEED_MAX: int = 0xF
@@ -158,11 +158,17 @@ while True:
 
                     if axis is Axis.LEFT_STICK_X:
                         dx = abs(abs(left_stick_x) - abs(event.value))
-                        speed_dx = abs(abs(stick_value_to_speed(left_stick_x)) - abs(stick_value_to_speed(event.value)))
+                        speed_dx = abs(
+                            abs(stick_value_to_speed(left_stick_x))
+                            - abs(stick_value_to_speed(event.value))
+                        )
                         left_stick_x = event.value
                     elif axis is Axis.LEFT_STICK_Y:
                         dy = abs(abs(left_stick_y) - abs(event.value))
-                        speed_dy = abs(abs(stick_value_to_speed(left_stick_y)) - abs(stick_value_to_speed(event.value)))
+                        speed_dy = abs(
+                            abs(stick_value_to_speed(left_stick_y))
+                            - abs(stick_value_to_speed(event.value))
+                        )
                         left_stick_y = event.value
 
                     if speed_dx == 0 and speed_dy == 0:
@@ -184,13 +190,21 @@ while True:
                     elif speed_y == 0 and speed_x < 0:
                         print(f"\t Panning Left (pan_speed={abs(speed_x)})")
                     elif speed_x > 0 and speed_y > 0:
-                        print(f"\t Tilting Down and Panning Right (tilt_speed={speed_y}, pan_speed={speed_x})")
+                        print(
+                            f"\t Tilting Down and Panning Right (tilt_speed={speed_y}, pan_speed={speed_x})"
+                        )
                     elif speed_x > 0 and speed_y < 0:
-                        print(f"\t Tilting Up and Panning Right (tilt_speed={abs(speed_y)}, pan_speed={speed_x})")
+                        print(
+                            f"\t Tilting Up and Panning Right (tilt_speed={abs(speed_y)}, pan_speed={speed_x})"
+                        )
                     elif speed_x < 0 and speed_y > 0:
-                        print(f"\t Tilting Down and Panning Left (tilt_speed={speed_y}, pan_speed={abs(speed_x)})")
+                        print(
+                            f"\t Tilting Down and Panning Left (tilt_speed={speed_y}, pan_speed={abs(speed_x)})"
+                        )
                     elif speed_x < 0 and speed_y < 0:
-                        print(f"\t Tilting Up and Panning Left (tilt_speed={abs(speed_y)}, pan_speed={abs(speed_x)})")
+                        print(
+                            f"\t Tilting Up and Panning Left (tilt_speed={abs(speed_y)}, pan_speed={abs(speed_x)})"
+                        )
                 elif axis is Axis.LEFT_TRIGGER:
                     print("\t TODO: Zoom Out")
                 elif axis is Axis.RIGHT_TRIGGER:

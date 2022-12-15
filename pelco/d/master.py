@@ -10,13 +10,13 @@ from .enums import (
     ZoomSpeed,
 )
 from .errors import ResponseError
-from .factory import SendCommandFactory
+from .factory import CommandFactory
 from .models import ExtendedResponse, GeneralResponse, SendCommandModel
 
 
 class PelcoD:
     address: int
-    factory: SendCommandFactory
+    factory: CommandFactory
     conn: Serial
 
     def __init__(
@@ -28,7 +28,7 @@ class PelcoD:
         timeout: int = 1,
     ) -> None:
         self.address = address
-        self.factory = SendCommandFactory(address=address)
+        self.factory = CommandFactory(address=address)
         self.conn = Serial(port=port, baudrate=baudrate, timeout=timeout)
 
     def __repr__(self) -> str:

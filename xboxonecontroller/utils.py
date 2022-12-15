@@ -1,4 +1,5 @@
 from typing import Optional
+
 from inputs import InputEvent
 
 from . import mappings

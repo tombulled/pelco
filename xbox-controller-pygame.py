@@ -1,5 +1,7 @@
-from enum import IntEnum, Enum, auto
+from enum import Enum, IntEnum, auto
+
 import pygame
+
 from pelco.d.master import PelcoD
 
 
