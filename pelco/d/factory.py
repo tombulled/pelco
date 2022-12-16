@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 
 from .constants import (
+    D_ECS_CLEAR_AUX_LED,
+    D_ECS_CLEAR_AUX_RELAY,
     UINT8_MAX,
     UINT8_SIZE,
     D_C_CAMERA,
@@ -176,8 +178,8 @@ class CommandFactory:
         up: bool = False,
         left: bool = False,
         right: bool = False,
-        pan_speed: int = 0,
-        tilt_speed: int = 0,
+        pan_speed: int = UNSET,
+        tilt_speed: int = UNSET,
     ) -> SendCommandModel:
         validate_not_all(iris_close=iris_close, iris_open=iris_open)
         validate_not_all(focus_near=focus_near, focus_far=focus_far)
@@ -329,12 +331,30 @@ class CommandFactory:
             data_2=led,
         )
 
-    def clear_auxiliary(self, aux_id: int) -> SendCommandModel:
+    def clear_auxiliary_relay(self, aux_id: int) -> SendCommandModel:
+        """
+        Causes an auxiliary function in the camera unit to be deactivated
+        """
+
         validate_aux_id(aux_id)
 
         return self._command(
+            command_1=D_ECS_CLEAR_AUX_RELAY,
             command_2=D_EC_CLEAR_AUX,
             data_2=aux_id,
+        )
+
+    def clear_auxiliary_led(self, led: int) -> SendCommandModel:
+        """
+        Causes an auxiliary function in the camera unit to be deactivated
+        """
+        
+        validate_uint8(led)
+
+        return self._command(
+            command_1=D_ECS_CLEAR_AUX_LED,
+            command_2=D_EC_CLEAR_AUX,
+            data_2=led,
         )
 
     # TODO: dummy

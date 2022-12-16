@@ -2,17 +2,16 @@ from typing import Final
 
 UINT8_SIZE: Final[int] = 8
 UINT8_MIN: Final[int] = 0x00
-UINT8_MAX: Final[int] = 0xFF
+UINT8_MAX: Final[int] = 2 ** UINT8_SIZE - 1
 
 UINT16_SIZE: Final[int] = 16
 UINT16_MIN: Final[int] = 0x00
-UINT16_MAX: Final[int] = 0xFFFF
+UINT16_MAX: Final[int] = 2 ** UINT16_SIZE - 1
 
+UNSET: Final[int] = 0x00
 DEFAULT_ADDRESS: Final[int] = 0x01
 
 SYNC: Final[int] = 0xFF
-
-UNSET: Final[int] = 0x00
 
 MIN_ADDRESS: Final[int] = 0x01
 MAX_ADDRESS: Final[int] = 0xFF
@@ -265,7 +264,7 @@ D_ECD_EVEREST_SCAN_RIGHT_PAN: Final[int] = 0x03
 D_ECD_EVEREST_ENABLE_LIMITS_DISABLE: Final[int] = 0x00
 D_ECD_EVEREST_ENABLE_LIMITS_ENABLE: Final[int] = 0x01
 
-# Predefined Presets
+# Pre-defined Presets
 PRESET_FLIP: Final[int] = 0x21
 PRESET_ZERO: Final[int] = 0x22
 PRESET_AUX1: Final[int] = 0x54
