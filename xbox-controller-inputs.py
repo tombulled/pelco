@@ -1,7 +1,7 @@
-from typing import Callable
+from typing import Callable, Sequence
 
 import serial.tools.list_ports
-
+from loguru import logger
 from pelco.d.master import PelcoD
 from xboxonecontroller.discovery import find_controllers
 from xboxonecontroller.enums import Axis, Button, EventType
@@ -10,6 +10,19 @@ from xboxonecontroller.enums import Axis, Button, EventType
 SPEED_MAX: int = 0xF
 TRIGGER_MAX: int = 2**10
 STICK_MAX: int = 2**15
+
+PAN_SPEED_MIN: int = 0x00
+PAN_SPEED_MAX: int = 0x3F
+PAN_SPEED_STEP: int = 0x01
+
+TILT_SPEED_MIN: int = 0x00
+TILT_SPEED_MAX: int = 0x3F
+TILT_SPEED_STEP: int = 0x01
+
+ZOOM_SPEED_MIN: int = 0x00
+ZOOM_SPEED_MAX: int = 0x03
+ZOOM_SPEED_STEP: int = 0x01
+
 STICK_THRESHOLD: float = 0.1  # Ignore the first 10%
 
 
@@ -36,11 +49,11 @@ class FakeCamera:
         return lambda *args, **kwargs: None
 
 
-camera = PelcoD(
-    address=0x02,
-    port=get_serial_device(),
-)
-# camera = FakeCamera()
+# camera = PelcoD(
+#     address=0x02,
+#     port=get_serial_device(),
+# )
+camera = FakeCamera()
 
 xbox_controller = get_xbox_controller()
 
@@ -64,6 +77,14 @@ def stick_value_to_speed(stick_value: int, /) -> int:
 
     return round(normalised_value * SPEED_MAX)
 
+def trigger_value_to_zoom_speed(value: int, /) -> int:
+    zoom_speeds: Sequence[int] = tuple(range(ZOOM_SPEED_MIN, ZOOM_SPEED_MAX + 1, ZOOM_SPEED_STEP))
+    max_index: int = len(zoom_speeds)-1
+    normalised_value: float = value / TRIGGER_MAX
+    zoom_speed_index: int = round(normalised_value * max_index)
+
+    return zoom_speeds[zoom_speed_index]
+
 
 left_stick_x: int = 0
 left_stick_y: int = 0
@@ -81,60 +102,56 @@ while True:
             down: bool = bool(event.value)
 
             if down:
-                print(f"Button Down: {button.name}")
-
                 if button is Button.RIGHT_BUMPER:
-                    print("\t Starting Focus Near")
+                    logger.info("Starting Focus Near")
                     camera.focus_near()
                 elif button is Button.LEFT_BUMPER:
-                    print("\t Starting Focus Far")
+                    logger.info("Starting Focus Far")
                     camera.focus_far()
             else:
-                print(f"Button Up: {button.name}")
-
                 if button is Button.MENU:
-                    print("\t SET PRESET 95")
+                    logger.info("Opening menu")
                     camera.set_preset(95)
+                elif button is Button.VIEW:
+                    logger.info("VIEW")
                 elif button is Button.A:
-                    print("\t TODO: Find purpose...")
+                    logger.info("A")
                 elif button is Button.B:  # Note: pointless as could flick a button?
-                    print("\t Stopping")
+                    logger.info("Stopping motion")
                     camera.stop()
                 elif button is Button.X:
-                    print("\t TODO: Find purpose... (toggle wiper?)")  # TODO
+                    logger.info("X")  # TODO
                 elif button is Button.Y:
-                    print("\t TODO: Find purpose...")
+                    logger.info("Y")
                 elif button is Button.RIGHT_BUMPER:
-                    print("\t STOP")
+                    logger.info("Stopping motion")
                     camera.stop()
                 elif button is Button.LEFT_BUMPER:
-                    print("\t STOP")
+                    logger.info("Stopping motion")
                     camera.stop()
         elif event.type == EventType.AXIS:
             axis: Axis = event.subject
 
             if axis in (Axis.D_PAD_X, Axis.D_PAD_Y):
-                print(f"Hat Motion: {axis.name} -> {event.value}")
-
                 if axis is Axis.D_PAD_X:
                     d_pad_x = event.value
                 elif axis is Axis.D_PAD_Y:
                     d_pad_y = event.value
 
                 if d_pad_y == 0 and d_pad_x == -1:
-                    print("\t Panning Left")
+                    logger.info(f"Panning Left (speed={DEFAULT_SPEED})")
                     camera.pan_left(DEFAULT_SPEED)
                 elif d_pad_y == 0 and d_pad_x == 1:
-                    print("\t Panning Right")
+                    logger.info(f"Panning Right (speed={DEFAULT_SPEED})")
                     camera.pan_right(DEFAULT_SPEED)
                 elif d_pad_x == 0 and d_pad_y == -1:
-                    print("\t Tilting Up")
+                    logger.info(f"Tilting Up (speed={DEFAULT_SPEED})")
                     camera.tilt_up(DEFAULT_SPEED)
                 elif d_pad_x == 0 and d_pad_y == 1:
-                    print("\t Tilting Down")
+                    logger.info(f"Tilting Down (speed={DEFAULT_SPEED})")
                     camera.tilt_down(DEFAULT_SPEED)
                 elif d_pad_y == -1 and d_pad_x == -1:
-                    print("\t Tilting Up and Panning Left")
+                    logger.info(f"Tilting Up and Panning Left (speed={DEFAULT_SPEED})")
                     camera.send_command_general_response(
                         camera.factory.standard(
                             up=True,
@@ -144,7 +161,7 @@ while True:
                         )
                     )
                 elif d_pad_y == -1 and d_pad_x == 1:
-                    print("\t Tilting Up and Panning Right")
+                    logger.info(f"Tilting Up and Panning Right (speed={DEFAULT_SPEED})")
                     camera.send_command_general_response(
                         camera.factory.standard(
                             up=True,
@@ -154,7 +171,7 @@ while True:
                         )
                     )
                 elif d_pad_y == 1 and d_pad_x == -1:
-                    print("\t Tilting Down and Panning Left")
+                    logger.info(f"Tilting Down and Panning Left (speed={DEFAULT_SPEED})")
                     camera.send_command_general_response(
                         camera.factory.standard(
                             down=True,
@@ -164,7 +181,7 @@ while True:
                         )
                     )
                 elif d_pad_y == 1 and d_pad_x == 1:
-                    print("\t Tilting Down and Panning Right")
+                    logger.info(f"Tilting Down and Panning Right (speed={DEFAULT_SPEED})")
                     camera.send_command_general_response(
                         camera.factory.standard(
                             down=True,
@@ -174,11 +191,9 @@ while True:
                         )
                     )
                 elif d_pad_y == 0 and d_pad_x == 0:
-                    print("\t Stopping Panning")
+                    logger.info("Stopping motion")
                     camera.stop()
             else:
-                # print(f"Axis Motion: {axis.name} -> {event.value}")
-
                 if axis in (Axis.LEFT_STICK_X, Axis.LEFT_STICK_Y):
                     dx: int = 0
                     dy: int = 0
@@ -208,23 +223,23 @@ while True:
                     speed_y: int = stick_value_to_speed(left_stick_y)
 
                     if speed_x == 0 and speed_y == 0:
-                        print("\t Stopping")
+                        logger.info("Stopping")
                         camera.stop()
                     elif speed_x == 0 and speed_y > 0:
-                        print(f"\t Tilting Down (tilt_speed={speed_y})")
+                        logger.info(f"Tilting Down (tilt_speed={speed_y})")
                         camera.tilt_down(speed_y)
                     elif speed_x == 0 and speed_y < 0:
-                        print(f"\t Tilting Up (tilt_speed={abs(speed_y)})")
+                        logger.info(f"Tilting Up (tilt_speed={abs(speed_y)})")
                         camera.tilt_up(abs(speed_y))
                     elif speed_y == 0 and speed_x > 0:
-                        print(f"\t Panning Right (pan_speed={speed_x})")
+                        logger.info(f"Panning Right (pan_speed={speed_x})")
                         camera.pan_right(speed_x)
                     elif speed_y == 0 and speed_x < 0:
-                        print(f"\t Panning Left (pan_speed={abs(speed_x)})")
+                        logger.info(f"Panning Left (pan_speed={abs(speed_x)})")
                         camera.pan_left(abs(speed_x))
                     elif speed_x > 0 and speed_y > 0:
-                        print(
-                            f"\t Tilting Down and Panning Right (tilt_speed={speed_y}, pan_speed={speed_x})"
+                        logger.info(
+                            f"Tilting Down and Panning Right (tilt_speed={speed_y}, pan_speed={speed_x})"
                         )
                         camera.send_command_general_response(
                             camera.factory.standard(
@@ -235,8 +250,8 @@ while True:
                             )
                         )
                     elif speed_x > 0 and speed_y < 0:
-                        print(
-                            f"\t Tilting Up and Panning Right (tilt_speed={abs(speed_y)}, pan_speed={speed_x})"
+                        logger.info(
+                            f"Tilting Up and Panning Right (tilt_speed={abs(speed_y)}, pan_speed={speed_x})"
                         )
                         camera.send_command_general_response(
                             camera.factory.standard(
@@ -247,8 +262,8 @@ while True:
                             )
                         )
                     elif speed_x < 0 and speed_y > 0:
-                        print(
-                            f"\t Tilting Down and Panning Left (tilt_speed={speed_y}, pan_speed={abs(speed_x)})"
+                        logger.info(
+                            f"Tilting Down and Panning Left (tilt_speed={speed_y}, pan_speed={abs(speed_x)})"
                         )
                         camera.send_command_general_response(
                             camera.factory.standard(
@@ -259,8 +274,8 @@ while True:
                             )
                         )
                     elif speed_x < 0 and speed_y < 0:
-                        print(
-                            f"\t Tilting Up and Panning Left (tilt_speed={abs(speed_y)}, pan_speed={abs(speed_x)})"
+                        logger.info(
+                            f"Tilting Up and Panning Left (tilt_speed={abs(speed_y)}, pan_speed={abs(speed_x)})"
                         )
                         camera.send_command_general_response(
                             camera.factory.standard(
@@ -271,6 +286,40 @@ while True:
                             )
                         )
                 elif axis is Axis.LEFT_TRIGGER:
-                    print("\t TODO: Zoom Out")
+                    if event.value == 0:
+                        logger.info("Stopping motion")
+                        camera.stop()
+                        continue
+
+                    zoom_speed: int = trigger_value_to_zoom_speed(event.value)
+                    prev_zoom_speed: int = trigger_value_to_zoom_speed(left_trigger)
+                    speed_diff: int = abs(zoom_speed - prev_zoom_speed)
+
+                    left_trigger = event.value
+
+                    if speed_diff == 0:
+                        continue
+
+                    logger.info(f"Setting zoom speed to {zoom_speed}")
+                    camera.set_zoom_speed(zoom_speed)
+                    logger.info("Zooming out")
+                    camera.zoom_wide()
                 elif axis is Axis.RIGHT_TRIGGER:
-                    print("\t TODO: Zoom In")
+                    if event.value == 0:
+                        logger.info("Stopping motion")
+                        camera.stop()
+                        continue
+
+                    zoom_speed: int = trigger_value_to_zoom_speed(event.value)
+                    prev_zoom_speed: int = trigger_value_to_zoom_speed(right_trigger)
+                    speed_diff: int = abs(zoom_speed - prev_zoom_speed)
+
+                    right_trigger = event.value
+
+                    if speed_diff == 0:
+                        continue
+
+                    logger.info(f"Setting zoom speed to {zoom_speed}")
+                    camera.set_zoom_speed(zoom_speed)
+                    logger.info("Zooming in")
+                    camera.zoom_tele()

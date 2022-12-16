@@ -36,6 +36,7 @@ commands = {
     "ws": lambda: p.set_auxiliary_relay(1),  # start wiper
     "we": lambda: p.clear_auxiliary(1),  # stop wiper
     "180": lambda: p.flip_180_about(),  # flip 180 degrees
+    "m": lambda: p.set_auxiliary_relay(95),  # flip 180 degrees
     "sp1": lambda: p.set_preset(1),  # set preset 1
     "sp2": lambda: p.set_preset(2),  # set preset 1
     "sp3": lambda: p.set_preset(3),  # set preset 1
