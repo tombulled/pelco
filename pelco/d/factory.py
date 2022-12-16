@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
 from .constants import (
+    D_EC_DUMMY_1,
     D_ECS_CLEAR_AUX_LED,
     D_ECS_CLEAR_AUX_RELAY,
     UINT8_MAX,
@@ -357,7 +358,16 @@ class CommandFactory:
             data_2=led,
         )
 
-    # TODO: dummy
+    def dummy(self) -> SendCommandModel:
+        """
+        This command is decoded and a general response is sent except for the
+        ExSite that gives no response at all. Nothing else occurs by any Pelco
+        equipment.
+        """
+
+        return self._command(
+            command_2=D_EC_DUMMY_1,
+        )
 
     def remote_reset(self) -> SendCommandModel:
         """
