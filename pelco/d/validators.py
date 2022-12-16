@@ -1,8 +1,12 @@
 from .constants import (
     MAX_LINE_LOCK_PHASE_DELAY,
     MAX_SHUTTER_SPEED,
+    MAX_WHITE_BALANCE_MG,
+    MAX_WHITE_BALANCE_RB,
     MIN_LINE_LOCK_PHASE_DELAY,
     MIN_SHUTTER_SPEED,
+    MIN_WHITE_BALANCE_MG,
+    MIN_WHITE_BALANCE_RB,
     UINT8_MAX,
     UINT8_MIN,
     MAX_ADDRESS,
@@ -133,3 +137,10 @@ def validate_shutter_speed(value: int, /) -> None:
 
 def validate_line_lock_phase_delay(value: int, /) -> None:
     validate_in_range(value, MIN_LINE_LOCK_PHASE_DELAY, MAX_LINE_LOCK_PHASE_DELAY)
+
+
+def validate_white_balance_rb(value: int, /) -> None:
+    validate_in_range(value, MIN_WHITE_BALANCE_RB, MAX_WHITE_BALANCE_RB)
+
+def validate_white_balance_mg(value: int, /) -> None:
+    validate_in_range(value, MIN_WHITE_BALANCE_MG, MAX_WHITE_BALANCE_MG)

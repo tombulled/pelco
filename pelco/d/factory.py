@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+from . import utils
 from .constants import (
     D_EC_DUMMY_1,
     D_ECD_AUTO_AGC_AUTO,
@@ -12,8 +13,12 @@ from .constants import (
     D_ECD_AUTO_FOCUS_OFF,
     D_ECD_AUTO_IRIS_AUTO,
     D_ECD_AUTO_IRIS_OFF,
+    D_ECS_ADJUST_MG_WB_DELTA,
+    D_ECS_ADJUST_MG_WB_NEW,
     D_ECS_ADJUST_PHASE_DELTA,
     D_ECS_ADJUST_PHASE_NEW,
+    D_ECS_ADJUST_RB_WB_DELTA,
+    D_ECS_ADJUST_RB_WB_NEW,
     D_ECS_CLEAR_AUX_LED,
     D_ECS_CLEAR_AUX_RELAY,
     UINT8_MAX,
@@ -91,7 +96,6 @@ from .constants import (
     MAX_WHITE_BALANCE_MG,
     MAX_WHITE_BALANCE_MG_MODE,
     MAX_WHITE_BALANCE_RB,
-    MAX_WHITE_BALANCE_RB_MODE,
     MAX_ZOOM_POSITION,
     MIN_ADJUST_AUTO_IRIS_LEVEL,
     MIN_ADJUST_AUTO_IRIS_LEVEL_MODE,
@@ -107,7 +111,6 @@ from .constants import (
     MIN_WHITE_BALANCE_MG,
     MIN_WHITE_BALANCE_MG_MODE,
     MIN_WHITE_BALANCE_RB,
-    MIN_WHITE_BALANCE_RB_MODE,
     MIN_ZOOM_POSITION,
     UNSET,
 )
@@ -128,6 +131,8 @@ from .validators import (
     validate_preset_id,
     validate_screen_column,
     validate_tilt_speed,
+    validate_white_balance_mg,
+    validate_white_balance_rb,
     validate_zone_id,
     validate_zoom_speed,
 )
@@ -222,8 +227,9 @@ class CommandFactory:
         validate_uint8(sub_opcode)
         validate_uint16(data)
 
-        data_1: int = (data >> UINT8_SIZE) & UINT8_MAX
-        data_2: int = data & UINT8_MAX
+        data_1: int
+        data_2: int
+        data_1, data_2 = utils.sep_uint16(data)
 
         return self._command(
             command_1=sub_opcode,
@@ -445,6 +451,10 @@ class CommandFactory:
         return self._extended(D_EC_ZOOM_SPEED, data=zoom_speed)
 
     def set_focus_speed(self, focus_speed: int) -> SendCommandModel:
+        """
+        Set Focus Speed (FOCUS SPEED)
+        """
+
         validate_focus_speed(focus_speed)
 
         return self._extended(D_EC_FOCUS_SPEED, data=focus_speed)
@@ -454,7 +464,7 @@ class CommandFactory:
 
     def auto_focus(self, enabled: bool = True) -> SendCommandModel:
         """
-        Auto Focus
+        Auto Focus (AUTO FOCUS)
 
         Control whether auto focus is on (default) or off.
         """
@@ -467,7 +477,7 @@ class CommandFactory:
 
     def auto_iris(self, enabled: bool = True) -> SendCommandModel:
         """
-        Auto Iris
+        Auto Iris (AUTO IRIS)
 
         Control whether auto iris is on (default) or off.
         """
@@ -478,7 +488,7 @@ class CommandFactory:
 
     def agc(self, enabled: bool = False) -> SendCommandModel:
         """
-        AGC
+        Automatic Gain Control (AGC)
 
         Control whether AGC (automatic gain control) is on or off (default).
         Sending an ADJUST GAIN command turns AGC off.
@@ -490,7 +500,7 @@ class CommandFactory:
 
     def blc(self, enabled: bool = False) -> SendCommandModel:
         """
-        Backlight Compensation
+        Backlight Compensation (BLC)
 
         Control whether backlight compensation is turned on or off (default).
         """
@@ -500,7 +510,7 @@ class CommandFactory:
 
     def awb(self, enabled: bool = True) -> SendCommandModel:
         """
-        Auto White Balance
+        Auto White Balance (AWB)
 
         Control whether auto white balance is turned on (default) or off.
         Sending an ADJUST WHITE BALANCE command turns auto white balance off.
@@ -512,7 +522,7 @@ class CommandFactory:
 
     def device_phase(self) -> SendCommandModel:
         """
-        Enable Device Phase Delay Mode
+        Enable Device Phase Delay Mode (DEVICE PHASE)
 
         When device phase delay is set, the phase delay is set by the device
         (there may be a manual adjustment). Sending an ADJUST LINE LOCK phase
@@ -548,40 +558,48 @@ class CommandFactory:
             data=line_lock_phase_delay,
         )
 
-    def adjust_white_balance_rb(
-        self, white_balance_mode: int, white_balance: int
+    def adjust_white_balance_rb_new(
+        self, white_balance: int
     ) -> SendCommandModel:
-        assert (
-            MIN_WHITE_BALANCE_RB_MODE <= white_balance_mode <= MAX_WHITE_BALANCE_RB_MODE
-        )
-        assert MIN_WHITE_BALANCE_RB <= white_balance <= MAX_WHITE_BALANCE_RB
+        validate_white_balance_rb(white_balance)
 
-        white_balance_msb: int = (white_balance >> UINT8_SIZE) & UINT8_MAX
-        white_balance_lsb: int = white_balance & UINT8_MAX
-
-        return self._command(
-            command_1=white_balance_mode,
-            command_2=D_EC_ADJUST_RB_WB,
-            data_1=white_balance_msb,
-            data_2=white_balance_lsb,
+        return self._extended(
+            opcode=D_EC_ADJUST_RB_WB,
+            sub_opcode=D_ECS_ADJUST_RB_WB_NEW,
+            data=white_balance,
         )
 
-    def adjust_white_balance_mg(
-        self, white_balance_mode: int, white_balance: int
+    def adjust_white_balance_rb_delta(
+        self, white_balance: int
     ) -> SendCommandModel:
-        assert (
-            MIN_WHITE_BALANCE_MG_MODE <= white_balance_mode <= MAX_WHITE_BALANCE_MG_MODE
+        validate_white_balance_rb(white_balance)
+
+        return self._extended(
+            opcode=D_EC_ADJUST_RB_WB,
+            sub_opcode=D_ECS_ADJUST_RB_WB_DELTA,
+            data=white_balance,
         )
-        assert MIN_WHITE_BALANCE_MG <= white_balance <= MAX_WHITE_BALANCE_MG
 
-        white_balance_msb: int = (white_balance >> UINT8_SIZE) & UINT8_MAX
-        white_balance_lsb: int = white_balance & UINT8_MAX
+    def adjust_white_balance_mg_new(
+        self, white_balance: int
+    ) -> SendCommandModel:
+        validate_white_balance_mg(white_balance)
 
-        return self._command(
-            command_1=white_balance_mode,
-            command_2=D_EC_ADJUST_MG_WB,
-            data_1=white_balance_msb,
-            data_2=white_balance_lsb,
+        return self._extended(
+            opcode=D_EC_ADJUST_MG_WB,
+            sub_opcode=D_ECS_ADJUST_MG_WB_NEW,
+            data=white_balance,
+        )
+
+    def adjust_white_balance_mg_delta(
+        self, white_balance: int
+    ) -> SendCommandModel:
+        validate_white_balance_mg(white_balance)
+
+        return self._extended(
+            opcode=D_EC_ADJUST_MG_WB,
+            sub_opcode=D_ECS_ADJUST_MG_WB_DELTA,
+            data=white_balance,
         )
 
     def adjust_gain(self, adjust_gain_mode: int, adjust_gain: int) -> SendCommandModel:
