@@ -31,19 +31,16 @@ def get_serial_device() -> str:
 
     raise Exception("Failed to find serial device")
 
-
-# camera = PelcoD(
-#     address=0x02,
-#     port=get_serial_device(),
-# )
-
-
 class FakeCamera:
     def __getattr__(self, _: str) -> Callable[..., None]:
         return lambda *args, **kwargs: None
 
 
-camera = FakeCamera()
+camera = PelcoD(
+    address=0x02,
+    port=get_serial_device(),
+)
+# camera = FakeCamera()
 
 xbox_controller = get_xbox_controller()
 
@@ -104,7 +101,7 @@ while True:
                     print("\t Stopping")
                     camera.stop()
                 elif button is Button.X:
-                    print("\t Toggle Wiper?")  # TODO
+                    print("\t TODO: Find purpose... (toggle wiper?)")  # TODO
                 elif button is Button.Y:
                     print("\t TODO: Find purpose...")
                 elif button is Button.RIGHT_BUMPER:
@@ -138,12 +135,44 @@ while True:
                     camera.tilt_down(DEFAULT_SPEED)
                 elif d_pad_y == -1 and d_pad_x == -1:
                     print("\t Tilting Up and Panning Left (currently unsupported)")
+                    camera.send_command_general_response(
+                        camera.factory.standard(
+                            up=True,
+                            left=True,
+                            pan_speed=DEFAULT_SPEED,
+                            tilt_speed=DEFAULT_SPEED,
+                        )
+                    )
                 elif d_pad_y == -1 and d_pad_x == 1:
                     print("\t Tilting Up and Panning Right (currently unsupported)")
+                    camera.send_command_general_response(
+                        camera.factory.standard(
+                            up=True,
+                            right=True,
+                            pan_speed=DEFAULT_SPEED,
+                            tilt_speed=DEFAULT_SPEED,
+                        )
+                    )
                 elif d_pad_y == 1 and d_pad_x == -1:
                     print("\t Tilting Down and Panning Left (currently unsupported)")
+                    camera.send_command_general_response(
+                        camera.factory.standard(
+                            down=True,
+                            left=True,
+                            pan_speed=DEFAULT_SPEED,
+                            tilt_speed=DEFAULT_SPEED,
+                        )
+                    )
                 elif d_pad_y == 1 and d_pad_x == 1:
                     print("\t Tilting Down and Panning Right (currently unsupported)")
+                    camera.send_command_general_response(
+                        camera.factory.standard(
+                            down=True,
+                            right=True,
+                            pan_speed=DEFAULT_SPEED,
+                            tilt_speed=DEFAULT_SPEED,
+                        )
+                    )
                 elif d_pad_y == 0 and d_pad_x == 0:
                     print("\t Stopping Panning")
                     camera.stop()
