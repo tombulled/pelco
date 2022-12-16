@@ -243,7 +243,7 @@ while True:
                                 up=True,
                                 right=True,
                                 pan_speed=speed_x,
-                                tilt_speed=speed_y,
+                                tilt_speed=abs(speed_y),
                             )
                         )
                     elif speed_x < 0 and speed_y > 0:
@@ -254,7 +254,7 @@ while True:
                             camera.factory.standard(
                                 down=True,
                                 left=True,
-                                pan_speed=speed_x,
+                                pan_speed=abs(speed_x),
                                 tilt_speed=speed_y,
                             )
                         )
@@ -266,8 +266,8 @@ while True:
                             camera.factory.standard(
                                 up=True,
                                 left=True,
-                                pan_speed=speed_x,
-                                tilt_speed=speed_y,
+                                pan_speed=abs(speed_x),
+                                tilt_speed=abs(speed_y),
                             )
                         )
                 elif axis is Axis.LEFT_TRIGGER:
