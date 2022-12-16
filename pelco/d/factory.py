@@ -334,7 +334,7 @@ class CommandFactory:
 
     def clear_auxiliary_relay(self, aux_id: int) -> SendCommandModel:
         """
-        Causes an auxiliary function in the camera unit to be deactivated
+        Causes an auxiliary function in the camera unit to be deactivated (Relay)
         """
 
         validate_aux_id(aux_id)
@@ -347,7 +347,7 @@ class CommandFactory:
 
     def clear_auxiliary_led(self, led: int) -> SendCommandModel:
         """
-        Causes an auxiliary function in the camera unit to be deactivated
+        Causes an auxiliary function in the camera unit to be deactivated (LED)
         """
         
         validate_uint8(led)

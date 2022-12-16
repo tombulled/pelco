@@ -179,7 +179,7 @@ class PelcoD:
         return self.send_command_general_response(self.factory.clear_auxiliary(aux_id))
 
     def dummy(self) -> GeneralResponse:
-        ...
+        return self.send_command_general_response(self.factory.dummy())
 
     def remote_reset(self) -> GeneralResponse:
         return self.send_command_general_response(self.factory.remote_reset())
