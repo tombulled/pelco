@@ -157,26 +157,29 @@ class PelcoD:
         return self.send_command_general_response(self.factory.clear_preset(id))
 
     def go_to_preset(self, id: int = 0x01) -> GeneralResponse:
-        return self.send_command_general_response(self.factory.go_to_preset(id))
+        return self.send_command_general_response(self.factory.move_preset(id))
 
     def flip_180_about(self) -> GeneralResponse:
-        return self.send_command_general_response(self.factory.flip_180_about())
+        return self.send_command_general_response(self.factory.move_preset(PRESET_FLIP))
 
     def go_to_zero_pan(self) -> GeneralResponse:
-        return self.send_command_general_response(self.factory.go_to_zero_pan())
+        return self.send_command_general_response(self.factory.move_preset(PRESET_ZERO))
 
     def set_auxiliary_relay(self, aux_id: int) -> GeneralResponse:
         return self.send_command_general_response(
-            self.factory.set_auxiliary_relay(aux_id)
+            self.factory.set_aux_relay(aux_id)
         )
 
     def set_auxiliary_led(self, led: int, rate: int) -> GeneralResponse:
         return self.send_command_general_response(
-            self.factory.set_auxiliary_led(led, rate)
+            self.factory.set_aux_led(led, rate)
         )
 
-    def clear_auxiliary(self, aux_id: int) -> GeneralResponse:
-        return self.send_command_general_response(self.factory.clear_auxiliary(aux_id))
+    def clear_auxiliary_relay(self, aux_id: int) -> GeneralResponse:
+        return self.send_command_general_response(self.factory.clear_aux_relay(aux_id))
+
+    def clear_auxiliary_led(self, led: int) -> GeneralResponse:
+        return self.send_command_general_response(self.factory.clear_aux_led(led))
 
     def dummy(self) -> GeneralResponse:
         return self.send_command_general_response(self.factory.dummy())
@@ -234,36 +237,36 @@ class PelcoD:
             self.factory.reset_camera_to_defaults()
         )
 
-    def set_auto_focus_mode(self, auto_focus_mode: int) -> GeneralResponse:
+    def auto_focus(self, on: bool = True) -> GeneralResponse:
         return self.send_command_general_response(
-            self.factory.set_auto_focus_mode(auto_focus_mode)
+            self.factory.auto_focus(on)
         )
 
-    def set_auto_iris_mode(self, auto_iris_mode: int) -> GeneralResponse:
+    def auto_iris(self, enabled: bool = True) -> GeneralResponse:
         return self.send_command_general_response(
-            self.factory.set_auto_iris_mode(auto_iris_mode)
+            self.factory.auto_iris(enabled)
         )
 
-    def set_agc_mode(self, agc_mode: int) -> GeneralResponse:
-        return self.send_command_general_response(self.factory.set_agc_mode(agc_mode))
+    def agc(self, enabled: bool = False) -> GeneralResponse:
+        return self.send_command_general_response(self.factory.agc(enabled))
 
-    def set_backlight_compensation_mode(
-        self, backlight_compensation_mode: int
+    def blc(
+        self, enabled: bool = False
     ) -> GeneralResponse:
         return self.send_command_general_response(
-            self.factory.set_backlight_compensation_mode(backlight_compensation_mode)
+            self.factory.blc(enabled)
         )
 
-    def set_auto_white_balance_mode(
-        self, auto_white_balance_mode: int
+    def awb(
+        self, enabled: bool = True
     ) -> GeneralResponse:
         return self.send_command_general_response(
-            self.factory.set_auto_white_balance_mode(auto_white_balance_mode)
+            self.factory.awb(enabled)
         )
 
-    def enable_device_phase_delay_mode(self) -> GeneralResponse:
+    def device_phase(self) -> GeneralResponse:
         return self.send_command_general_response(
-            self.factory.enable_device_phase_delay_mode()
+            self.factory.device_phase()
         )
 
     def set_shutter_speed(self, shutter_speed: int) -> GeneralResponse:
@@ -275,7 +278,7 @@ class PelcoD:
         self, line_lock_phase_delay_mode: int, line_lock_phase_delay: int
     ) -> GeneralResponse:
         return self.send_command_general_response(
-            self.factory.adjust_line_lock_phase_delay(
+            self.factory.adjust_line_lock_phase_delay_new(
                 line_lock_phase_delay_mode, line_lock_phase_delay
             )
         )

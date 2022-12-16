@@ -2,6 +2,18 @@ from dataclasses import dataclass
 
 from .constants import (
     D_EC_DUMMY_1,
+    D_ECD_AUTO_AGC_AUTO,
+    D_ECD_AUTO_AGC_OFF,
+    D_ECD_AUTO_AWB_OFF,
+    D_ECD_AUTO_AWB_ON,
+    D_ECD_AUTO_BLC_OFF,
+    D_ECD_AUTO_BLC_ON,
+    D_ECD_AUTO_FOCUS_AUTO,
+    D_ECD_AUTO_FOCUS_OFF,
+    D_ECD_AUTO_IRIS_AUTO,
+    D_ECD_AUTO_IRIS_OFF,
+    D_ECS_ADJUST_PHASE_DELTA,
+    D_ECS_ADJUST_PHASE_NEW,
     D_ECS_CLEAR_AUX_LED,
     D_ECS_CLEAR_AUX_RELAY,
     UINT8_MAX,
@@ -71,17 +83,9 @@ from .constants import (
     MAX_ADJUST_AUTO_IRIS_PEAK_VALUE_MODE,
     MAX_ADJUST_GAIN,
     MAX_ADJUST_GAIN_MODE,
-    MAX_AGC_MODE,
-    MAX_AUTO_FOCUS_MODE,
-    MAX_AUTO_IRIS_MODE,
-    MAX_AUTO_WHITE_BALANCE_MODE,
-    MAX_BACKLIGHT_COMPENSATION_MODE,
     MAX_EVEREST_MACRO_SUB_OPCODE,
-    MAX_LINE_LOCK_PHASE_DELAY,
-    MAX_LINE_LOCK_PHASE_DELAY_MODE,
     MAX_PAN_POSITION,
     MAX_QUERY_TYPE,
-    MAX_SHUTTER_SPEED,
     MAX_TILT_POSITION,
     MAX_VERSION_INFORMATION_MACRO_SUB_OPCODE,
     MAX_WHITE_BALANCE_MG,
@@ -95,17 +99,9 @@ from .constants import (
     MIN_ADJUST_AUTO_IRIS_PEAK_VALUE_MODE,
     MIN_ADJUST_GAIN,
     MIN_ADJUST_GAIN_MODE,
-    MIN_AGC_MODE,
-    MIN_AUTO_FOCUS_MODE,
-    MIN_AUTO_IRIS_MODE,
-    MIN_AUTO_WHITE_BALANCE_MODE,
-    MIN_BACKLIGHT_COMPENSATION_MODE,
     MIN_EVEREST_MACRO_SUB_OPCODE,
-    MIN_LINE_LOCK_PHASE_DELAY,
-    MIN_LINE_LOCK_PHASE_DELAY_MODE,
     MIN_PAN_POSITION,
     MIN_QUERY_TYPE,
-    MIN_SHUTTER_SPEED,
     MIN_TILT_POSITION,
     MIN_VERSION_INFORMATION_MACRO_SUB_OPCODE,
     MIN_WHITE_BALANCE_MG,
@@ -113,15 +109,15 @@ from .constants import (
     MIN_WHITE_BALANCE_RB,
     MIN_WHITE_BALANCE_RB_MODE,
     MIN_ZOOM_POSITION,
-    PRESET_FLIP,
-    PRESET_ZERO,
     UNSET,
 )
 from .models import SendCommandModel
 from .validators import (
     validate_address,
     validate_aux_id,
+    validate_line_lock_phase_delay,
     validate_odd,
+    validate_shutter_speed,
     validate_uint16,
     validate_uint8,
     validate_all_uint8,
@@ -163,7 +159,7 @@ class CommandFactory:
             data_2=data_2,
         )
 
-    def standard(
+    def _standard(
         self,
         *,
         sense: bool = False,
@@ -215,7 +211,7 @@ class CommandFactory:
             data_2=tilt_speed,
         )
 
-    def extended(
+    def _extended(
         self,
         opcode: int,
         sub_opcode: int = UNSET,
@@ -237,54 +233,71 @@ class CommandFactory:
         )
 
     def stop(self) -> SendCommandModel:
-        return self.standard()
+        return self._standard()
 
     def camera_on(self) -> SendCommandModel:
-        return self.standard(camera=True, sense=True)
+        return self._standard(camera=True, sense=True)
 
     def camera_off(self) -> SendCommandModel:
-        return self.standard(camera=True)
+        return self._standard(camera=True)
 
     def scan_auto(self) -> SendCommandModel:
-        return self.standard(scan=True, sense=True)
+        return self._standard(scan=True, sense=True)
 
     def scan_manual(self) -> SendCommandModel:
-        return self.standard(scan=True)
+        return self._standard(scan=True)
 
     def iris_close(self) -> SendCommandModel:
-        return self.standard(iris_close=True)
+        return self._standard(iris_close=True)
 
     def iris_open(self) -> SendCommandModel:
-        return self.standard(iris_open=True)
+        return self._standard(iris_open=True)
 
     def pan_right(self, speed: int) -> SendCommandModel:
-        return self.standard(right=True, pan_speed=speed)
+        return self._standard(right=True, pan_speed=speed)
 
     def pan_left(self, speed: int) -> SendCommandModel:
-        return self.standard(left=True, pan_speed=speed)
+        return self._standard(left=True, pan_speed=speed)
 
     def tilt_up(self, speed: int) -> SendCommandModel:
-        return self.standard(up=True, tilt_speed=speed)
+        return self._standard(up=True, tilt_speed=speed)
 
     def tilt_down(self, speed: int) -> SendCommandModel:
-        return self.standard(down=True, tilt_speed=speed)
+        return self._standard(down=True, tilt_speed=speed)
 
     def zoom_tele(self) -> SendCommandModel:
-        return self.standard(zoom_tele=True)
+        return self._standard(zoom_tele=True)
 
     def zoom_wide(self) -> SendCommandModel:
-        return self.standard(zoom_wide=True)
+        return self._standard(zoom_wide=True)
 
     def focus_far(self) -> SendCommandModel:
-        return self.standard(focus_far=True)
+        return self._standard(focus_far=True)
 
     def focus_near(self) -> SendCommandModel:
-        return self.standard(focus_near=True)
+        return self._standard(focus_near=True)
 
     def set_preset(self, preset_id: int) -> SendCommandModel:
+        """
+        When this command is issued, the current pan, tilt, focus, and zoom
+        positions are saved for the preset number specified in the command and
+        the label for that preset becomes whatever is currently on the second
+        video line.
+
+        Usually this command will cause the camera system to remember where it
+        is currently pointing. Other times it will cause a specific action to
+        occur. The most common of specific action is a menu call command
+        with either SET PRESET 95 (or SET PRESET 28 in 32 preset mode).
+
+        Pre-assigned presets may not be used for position setting. If an attempt
+        to do so is done, then the command is ignored with a General Reply being
+        returned. The pre-assigned presets may be determined by using
+        QUERY DEFINED PRESETS and its reply of QUERY DEFINED PRESETS RESPONSE.
+        """
+
         validate_preset_id(preset_id)
 
-        return self.extended(D_EC_SET_PRESET, data=preset_id)
+        return self._extended(D_EC_SET_PRESET, data=preset_id)
 
     def clear_preset(self, preset_id: int) -> SendCommandModel:
         """
@@ -295,33 +308,40 @@ class CommandFactory:
 
         validate_preset_id(preset_id)
 
-        return self.extended(D_EC_CLEAR_PRESET, data=preset_id)
+        return self._extended(D_EC_CLEAR_PRESET, data=preset_id)
 
-    def go_to_preset(self, preset_id: int) -> SendCommandModel:
+    def move_preset(self, preset_id: int) -> SendCommandModel:
         """
         Causes the camera unit to move, at preset speed, to the requested position.
+
+        When a move to preset command is received, the preset position stored for
+        the preset number specified in the command is checked. If the position
+        is not valid, the command is ignored. Otherwise the unit moves to the
+        preset pan, tilt, zoom, and focus positions. Once the preset has been
+        reached, the preset label is displayed on the second video line or where
+        it has been moved through use of the set 95 menu system.
+
+        If any command which causes motion is received during a move to preset,
+        the move will be aborted and the new command will start. These commands
+        are: a motion command, or another move to preset command. Also, if the
+        move is not completed within a timeout period, the move is aborted and
+        motion is stopped.
         """
 
         validate_preset_id(preset_id)
 
-        return self.extended(D_EC_MOVE_PRESET, data=preset_id)
+        return self._extended(D_EC_MOVE_PRESET, data=preset_id)
 
-    def flip_180_about(self) -> SendCommandModel:
-        return self.go_to_preset(PRESET_FLIP)
-
-    def go_to_zero_pan(self) -> SendCommandModel:
-        return self.go_to_preset(PRESET_ZERO)
-
-    def set_auxiliary_relay(self, aux_id: int) -> SendCommandModel:
+    def set_aux_relay(self, aux_id: int) -> SendCommandModel:
         validate_aux_id(aux_id)
 
-        return self._command(
-            command_1=D_ECS_SET_AUX_RELAY,
-            command_2=D_EC_SET_AUX,
-            data_2=aux_id,
+        return self._extended(
+            opcode=D_EC_SET_AUX,
+            sub_opcode=D_ECS_SET_AUX_RELAY,
+            data=aux_id,
         )
 
-    def set_auxiliary_led(self, led: int, rate: int) -> SendCommandModel:
+    def set_aux_led(self, led: int, rate: int) -> SendCommandModel:
         validate_uint8(led)
         validate_uint8(rate)
 
@@ -332,30 +352,30 @@ class CommandFactory:
             data_2=led,
         )
 
-    def clear_auxiliary_relay(self, aux_id: int) -> SendCommandModel:
+    def clear_aux_relay(self, aux_id: int) -> SendCommandModel:
         """
         Causes an auxiliary function in the camera unit to be deactivated (Relay)
         """
 
         validate_aux_id(aux_id)
 
-        return self._command(
-            command_1=D_ECS_CLEAR_AUX_RELAY,
-            command_2=D_EC_CLEAR_AUX,
-            data_2=aux_id,
+        return self._extended(
+            opcode=D_EC_CLEAR_AUX,
+            sub_opcode=D_ECS_CLEAR_AUX_RELAY,
+            data=aux_id,
         )
 
-    def clear_auxiliary_led(self, led: int) -> SendCommandModel:
+    def clear_aux_led(self, led: int) -> SendCommandModel:
         """
         Causes an auxiliary function in the camera unit to be deactivated (LED)
         """
-        
+
         validate_uint8(led)
 
-        return self._command(
-            command_1=D_ECS_CLEAR_AUX_LED,
-            command_2=D_EC_CLEAR_AUX,
-            data_2=led,
+        return self._extended(
+            opcode=D_EC_CLEAR_AUX,
+            sub_opcode=D_ECS_CLEAR_AUX_LED,
+            data=led,
         )
 
     def dummy(self) -> SendCommandModel:
@@ -365,9 +385,7 @@ class CommandFactory:
         equipment.
         """
 
-        return self._command(
-            command_2=D_EC_DUMMY_1,
-        )
+        return self._extended(D_EC_DUMMY_1)
 
     def remote_reset(self) -> SendCommandModel:
         """
@@ -376,25 +394,17 @@ class CommandFactory:
         the system off and then back on.
         """
 
-        return self._command(
-            command_2=D_EC_RESET,
-        )
+        return self._extended(D_EC_RESET)
 
     def set_zone_start(self, zone_id: int) -> SendCommandModel:
         validate_zone_id(zone_id)
 
-        return self._command(
-            command_2=D_EC_ZONE_START,
-            data_2=zone_id,
-        )
+        return self._extended(D_EC_ZONE_START, data=zone_id)
 
     def set_zone_end(self, zone_id: int) -> SendCommandModel:
         validate_zone_id(zone_id)
 
-        return self._command(
-            command_2=D_EC_ZONE_END,
-            data_2=zone_id,
-        )
+        return self._extended(D_EC_ZONE_END, data=zone_id)
 
     def write_character_to_screen(
         self, screen_column: int, ascii_char: int
@@ -409,153 +419,133 @@ class CommandFactory:
         )
 
     def zone_scan_on(self) -> SendCommandModel:
-        return self._command(
-            command_2=D_EC_ZONE_ON,
-        )
+        return self._extended(D_EC_ZONE_ON)
 
     def zone_scan_off(self) -> SendCommandModel:
-        return self._command(
-            command_2=D_EC_ZONE_OFF,
-        )
+        return self._extended(D_EC_ZONE_OFF)
 
     def set_pattern_start(self, pattern_id: int) -> SendCommandModel:
         validate_pattern_id(pattern_id)
 
-        return self._command(
-            command_2=D_EC_START_RECORD,
-            data_2=pattern_id,
-        )
+        return self._extended(D_EC_START_RECORD, data=pattern_id)
 
     def set_pattern_end(self, pattern_id: int) -> SendCommandModel:
         validate_pattern_id(pattern_id)
 
-        return self._command(
-            command_2=D_EC_END_RECORD,
-            data_2=pattern_id,
-        )
+        return self._extended(D_EC_END_RECORD, data=pattern_id)
 
     def run_pattern(self, pattern_id: int) -> SendCommandModel:
         validate_pattern_id(pattern_id)
 
-        return self._command(
-            command_2=D_EC_START_PLAY,
-            data_2=pattern_id,
-        )
+        return self._extended(D_EC_START_PLAY, data=pattern_id)
 
     def set_zoom_speed(self, zoom_speed: int) -> SendCommandModel:
         validate_zoom_speed(zoom_speed)
 
-        return self._command(
-            command_2=D_EC_ZOOM_SPEED,
-            data_2=zoom_speed,
-        )
+        return self._extended(D_EC_ZOOM_SPEED, data=zoom_speed)
 
     def set_focus_speed(self, focus_speed: int) -> SendCommandModel:
         validate_focus_speed(focus_speed)
 
-        return self._command(
-            command_2=D_EC_FOCUS_SPEED,
-            data_2=focus_speed,
-        )
+        return self._extended(D_EC_FOCUS_SPEED, data=focus_speed)
 
     def reset_camera_to_defaults(self) -> SendCommandModel:
-        return self._command(
-            command_2=D_EC_CAMERA_RESET,
+        return self._extended(D_EC_CAMERA_RESET)
+
+    def auto_focus(self, enabled: bool = True) -> SendCommandModel:
+        """
+        Auto Focus
+
+        Control whether auto focus is on (default) or off.
+        """
+
+        auto_focus_ctrl: int = (
+            D_ECD_AUTO_FOCUS_AUTO if enabled else D_ECD_AUTO_FOCUS_OFF
         )
 
-    def set_auto_focus_mode(self, auto_focus_mode: int) -> SendCommandModel:
-        assert MIN_AUTO_FOCUS_MODE <= auto_focus_mode <= MAX_AUTO_FOCUS_MODE
+        return self._extended(D_EC_AUTO_FOCUS, data=auto_focus_ctrl)
 
-        return self._command(
-            command_2=D_EC_AUTO_FOCUS,
-            data_2=auto_focus_mode,
-        )
+    def auto_iris(self, enabled: bool = True) -> SendCommandModel:
+        """
+        Auto Iris
 
-    def set_auto_iris_mode(self, auto_iris_mode: int) -> SendCommandModel:
-        assert MIN_AUTO_IRIS_MODE <= auto_iris_mode <= MAX_AUTO_IRIS_MODE
+        Control whether auto iris is on (default) or off.
+        """
 
-        return self._command(
-            command_2=D_EC_AUTO_IRIS,
-            data_2=auto_iris_mode,
-        )
+        auto_iris_ctrl: int = D_ECD_AUTO_IRIS_AUTO if enabled else D_ECD_AUTO_IRIS_OFF
 
-    def set_agc_mode(self, agc_mode: int) -> SendCommandModel:
-        assert MIN_AGC_MODE <= agc_mode <= MAX_AGC_MODE
+        return self._extended(D_EC_AUTO_IRIS, data=auto_iris_ctrl)
 
-        return self._command(
-            command_2=D_EC_AGC,
-            data_2=agc_mode,
-        )
+    def agc(self, enabled: bool = False) -> SendCommandModel:
+        """
+        AGC
 
-    def set_backlight_compensation_mode(
-        self, backlight_compensation_mode: int
-    ) -> SendCommandModel:
-        assert (
-            MIN_BACKLIGHT_COMPENSATION_MODE
-            <= backlight_compensation_mode
-            <= MAX_BACKLIGHT_COMPENSATION_MODE
-        )
+        Control whether AGC (automatic gain control) is on or off (default).
+        Sending an ADJUST GAIN command turns AGC off.
+        """
 
-        return self._command(
-            command_2=D_EC_BLC,
-            data_2=backlight_compensation_mode,
-        )
+        agc_ctrl: int = D_ECD_AUTO_AGC_AUTO if enabled else D_ECD_AUTO_AGC_OFF
 
-    def set_auto_white_balance_mode(
-        self, auto_white_balance_mode: int
-    ) -> SendCommandModel:
-        assert (
-            MIN_AUTO_WHITE_BALANCE_MODE
-            <= auto_white_balance_mode
-            <= MAX_AUTO_WHITE_BALANCE_MODE
-        )
+        return self._extended(D_EC_AGC, data=agc_ctrl)
 
-        return self._command(
-            command_2=D_EC_AWB,
-            data_2=auto_white_balance_mode,
-        )
+    def blc(self, enabled: bool = False) -> SendCommandModel:
+        """
+        Backlight Compensation
 
-    def enable_device_phase_delay_mode(self) -> SendCommandModel:
-        return self._command(
-            command_2=D_EC_DEVICE_PHASE,
-        )
+        Control whether backlight compensation is turned on or off (default).
+        """
+        blc_ctrl: int = D_ECD_AUTO_BLC_ON if enabled else D_ECD_AUTO_BLC_OFF
+
+        return self._extended(D_EC_BLC, data=blc_ctrl)
+
+    def awb(self, enabled: bool = True) -> SendCommandModel:
+        """
+        Auto White Balance
+
+        Control whether auto white balance is turned on (default) or off.
+        Sending an ADJUST WHITE BALANCE command turns auto white balance off.
+        """
+
+        awb_ctrl: int = D_ECD_AUTO_AWB_ON if enabled else D_ECD_AUTO_AWB_OFF
+
+        return self._extended(D_EC_AWB, data=awb_ctrl)
+
+    def device_phase(self) -> SendCommandModel:
+        """
+        Enable Device Phase Delay Mode
+
+        When device phase delay is set, the phase delay is set by the device
+        (there may be a manual adjustment). Sending an ADJUST LINE LOCK phase
+        delay command will disable device phase delay mode.
+        """
+
+        return self._extended(D_EC_DEVICE_PHASE)
 
     def set_shutter_speed(self, shutter_speed: int) -> SendCommandModel:
-        assert MIN_SHUTTER_SPEED <= shutter_speed <= MAX_SHUTTER_SPEED
+        validate_shutter_speed(shutter_speed)
 
-        shutter_speed_msb: int = (shutter_speed >> UINT8_SIZE) & UINT8_MAX
-        shutter_speed_lsb: int = shutter_speed & UINT8_MAX
+        return self._extended(D_EC_SHUTTER_SPEED, data=shutter_speed)
 
-        return self._command(
-            command_2=D_EC_SHUTTER_SPEED,
-            data_1=shutter_speed_msb,
-            data_2=shutter_speed_lsb,
-        )
-
-    def adjust_line_lock_phase_delay(
-        self, line_lock_phase_delay_mode: int, line_lock_phase_delay: int
+    def adjust_line_lock_phase_delay_new(
+        self, line_lock_phase_delay: int
     ) -> SendCommandModel:
-        assert (
-            MIN_LINE_LOCK_PHASE_DELAY_MODE
-            <= line_lock_phase_delay_mode
-            <= MAX_LINE_LOCK_PHASE_DELAY_MODE
-        )
-        assert (
-            MIN_LINE_LOCK_PHASE_DELAY
-            <= line_lock_phase_delay
-            <= MAX_LINE_LOCK_PHASE_DELAY
+        validate_line_lock_phase_delay(line_lock_phase_delay)
+
+        return self._extended(
+            opcode=D_EC_ADJUST_PHASE,
+            sub_opcode=D_ECS_ADJUST_PHASE_NEW,
+            data=line_lock_phase_delay,
         )
 
-        line_lock_phase_delay_msb: int = (
-            line_lock_phase_delay >> UINT8_SIZE
-        ) & UINT8_MAX
-        line_lock_phase_delay_lsb: int = line_lock_phase_delay & UINT8_MAX
+    def adjust_line_lock_phase_delay_delta(
+        self, line_lock_phase_delay: int
+    ) -> SendCommandModel:
+        validate_line_lock_phase_delay(line_lock_phase_delay)
 
-        return self._command(
-            command_1=line_lock_phase_delay_mode,
-            command_2=D_EC_ADJUST_PHASE,
-            data_1=line_lock_phase_delay_msb,
-            data_2=line_lock_phase_delay_lsb,
+        return self._extended(
+            opcode=D_EC_ADJUST_PHASE,
+            sub_opcode=D_ECS_ADJUST_PHASE_DELTA,
+            data=line_lock_phase_delay,
         )
 
     def adjust_white_balance_rb(

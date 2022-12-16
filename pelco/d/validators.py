@@ -1,4 +1,8 @@
 from .constants import (
+    MAX_LINE_LOCK_PHASE_DELAY,
+    MAX_SHUTTER_SPEED,
+    MIN_LINE_LOCK_PHASE_DELAY,
+    MIN_SHUTTER_SPEED,
     UINT8_MAX,
     UINT8_MIN,
     MAX_ADDRESS,
@@ -121,3 +125,11 @@ def validate_zoom_speed(value: int, /) -> None:
 
 def validate_focus_speed(value: int, /) -> None:
     validate_in_range(value, MIN_FOCUS_SPEED, MAX_FOCUS_SPEED)
+
+
+def validate_shutter_speed(value: int, /) -> None:
+    validate_in_range(value, MIN_SHUTTER_SPEED, MAX_SHUTTER_SPEED)
+
+
+def validate_line_lock_phase_delay(value: int, /) -> None:
+    validate_in_range(value, MIN_LINE_LOCK_PHASE_DELAY, MAX_LINE_LOCK_PHASE_DELAY)
