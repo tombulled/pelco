@@ -134,7 +134,7 @@ while True:
                     print("\t Tilting Down")
                     camera.tilt_down(DEFAULT_SPEED)
                 elif d_pad_y == -1 and d_pad_x == -1:
-                    print("\t Tilting Up and Panning Left (currently unsupported)")
+                    print("\t Tilting Up and Panning Left")
                     camera.send_command_general_response(
                         camera.factory.standard(
                             up=True,
@@ -144,7 +144,7 @@ while True:
                         )
                     )
                 elif d_pad_y == -1 and d_pad_x == 1:
-                    print("\t Tilting Up and Panning Right (currently unsupported)")
+                    print("\t Tilting Up and Panning Right")
                     camera.send_command_general_response(
                         camera.factory.standard(
                             up=True,
@@ -154,7 +154,7 @@ while True:
                         )
                     )
                 elif d_pad_y == 1 and d_pad_x == -1:
-                    print("\t Tilting Down and Panning Left (currently unsupported)")
+                    print("\t Tilting Down and Panning Left")
                     camera.send_command_general_response(
                         camera.factory.standard(
                             down=True,
@@ -164,7 +164,7 @@ while True:
                         )
                     )
                 elif d_pad_y == 1 and d_pad_x == 1:
-                    print("\t Tilting Down and Panning Right (currently unsupported)")
+                    print("\t Tilting Down and Panning Right")
                     camera.send_command_general_response(
                         camera.factory.standard(
                             down=True,
@@ -222,17 +222,49 @@ while True:
                         print(
                             f"\t Tilting Down and Panning Right (tilt_speed={speed_y}, pan_speed={speed_x})"
                         )
+                        camera.send_command_general_response(
+                            camera.factory.standard(
+                                down=True,
+                                right=True,
+                                pan_speed=speed_x,
+                                tilt_speed=speed_y,
+                            )
+                        )
                     elif speed_x > 0 and speed_y < 0:
                         print(
                             f"\t Tilting Up and Panning Right (tilt_speed={abs(speed_y)}, pan_speed={speed_x})"
+                        )
+                        camera.send_command_general_response(
+                            camera.factory.standard(
+                                up=True,
+                                right=True,
+                                pan_speed=speed_x,
+                                tilt_speed=speed_y,
+                            )
                         )
                     elif speed_x < 0 and speed_y > 0:
                         print(
                             f"\t Tilting Down and Panning Left (tilt_speed={speed_y}, pan_speed={abs(speed_x)})"
                         )
+                        camera.send_command_general_response(
+                            camera.factory.standard(
+                                down=True,
+                                left=True,
+                                pan_speed=speed_x,
+                                tilt_speed=speed_y,
+                            )
+                        )
                     elif speed_x < 0 and speed_y < 0:
                         print(
                             f"\t Tilting Up and Panning Left (tilt_speed={abs(speed_y)}, pan_speed={abs(speed_x)})"
+                        )
+                        camera.send_command_general_response(
+                            camera.factory.standard(
+                                up=True,
+                                left=True,
+                                pan_speed=speed_x,
+                                tilt_speed=speed_y,
+                            )
                         )
                 elif axis is Axis.LEFT_TRIGGER:
                     print("\t TODO: Zoom Out")
