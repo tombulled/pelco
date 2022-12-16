@@ -212,12 +212,16 @@ while True:
                         camera.stop()
                     elif speed_x == 0 and speed_y > 0:
                         print(f"\t Tilting Down (tilt_speed={speed_y})")
+                        camera.tilt_down(speed_y)
                     elif speed_x == 0 and speed_y < 0:
                         print(f"\t Tilting Up (tilt_speed={abs(speed_y)})")
+                        camera.tilt_up(abs(speed_y))
                     elif speed_y == 0 and speed_x > 0:
                         print(f"\t Panning Right (pan_speed={speed_x})")
+                        camera.pan_right(speed_x)
                     elif speed_y == 0 and speed_x < 0:
                         print(f"\t Panning Left (pan_speed={abs(speed_x)})")
+                        camera.pan_left(abs(speed_x))
                     elif speed_x > 0 and speed_y > 0:
                         print(
                             f"\t Tilting Down and Panning Right (tilt_speed={speed_y}, pan_speed={speed_x})"
