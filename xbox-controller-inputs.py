@@ -326,12 +326,15 @@ while True:
                         logger.info("Zooming in")
                         camera.zoom_tele()
     except ResponseError as error:
-        logger.error("Camera did not send a response, try again.")
+        logger.error(error)
         continue
     except OSError as error:
+        logger.error(error)
+
         # XBox controller has disconnected, attempt to reconnect.
         try:
             xbox_controller = get_xbox_controller()
-        except Exception:
+        except Exception as error:
             # XBox controller not available, give up for now.
+            logger.error(error)
             continue
