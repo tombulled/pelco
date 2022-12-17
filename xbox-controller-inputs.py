@@ -4,6 +4,7 @@ import serial.tools.list_ports
 from loguru import logger
 from pelco.d.errors import ResponseError
 from pelco.d.master import PelcoD
+from xboxonecontroller.controller import XBoxOneController
 from xboxonecontroller.discovery import find_controllers
 from xboxonecontroller.enums import Axis, Button, EventType
 
@@ -45,6 +46,7 @@ def get_serial_device() -> str:
 
     raise Exception("Failed to find serial device")
 
+
 class FakeCamera:
     def __getattr__(self, _: str) -> Callable[..., None]:
         return lambda *args, **kwargs: None
@@ -56,7 +58,9 @@ camera = PelcoD(
 )
 # camera = FakeCamera()
 
-xbox_controller = get_xbox_controller()
+XBOX_CONTROLLER_DEVICE_PATH: str = "/dev/input/by-id/usb-Microsoft_Controller_3032363030303037393636363230-event-joystick"
+
+xbox_controller = XBoxOneController(device_path=XBOX_CONTROLLER_DEVICE_PATH)
 
 DEFAULT_SPEED: int = 0x1F
 
@@ -78,9 +82,12 @@ def stick_value_to_speed(stick_value: int, /) -> int:
 
     return round(normalised_value * SPEED_MAX)
 
+
 def trigger_value_to_zoom_speed(value: int, /) -> int:
-    zoom_speeds: Sequence[int] = tuple(range(ZOOM_SPEED_MIN, ZOOM_SPEED_MAX + 1, ZOOM_SPEED_STEP))
-    max_index: int = len(zoom_speeds)-1
+    zoom_speeds: Sequence[int] = tuple(
+        range(ZOOM_SPEED_MIN, ZOOM_SPEED_MAX + 1, ZOOM_SPEED_STEP)
+    )
+    max_index: int = len(zoom_speeds) - 1
     normalised_value: float = value / TRIGGER_MAX
     zoom_speed_index: int = round(normalised_value * max_index)
 
@@ -153,7 +160,9 @@ while True:
                         logger.info(f"Tilting Down (speed={DEFAULT_SPEED})")
                         camera.tilt_down(DEFAULT_SPEED)
                     elif d_pad_y == -1 and d_pad_x == -1:
-                        logger.info(f"Tilting Up and Panning Left (speed={DEFAULT_SPEED})")
+                        logger.info(
+                            f"Tilting Up and Panning Left (speed={DEFAULT_SPEED})"
+                        )
                         camera.send_command_general_response(
                             camera.factory._standard(
                                 up=True,
@@ -163,7 +172,9 @@ while True:
                             )
                         )
                     elif d_pad_y == -1 and d_pad_x == 1:
-                        logger.info(f"Tilting Up and Panning Right (speed={DEFAULT_SPEED})")
+                        logger.info(
+                            f"Tilting Up and Panning Right (speed={DEFAULT_SPEED})"
+                        )
                         camera.send_command_general_response(
                             camera.factory._standard(
                                 up=True,
@@ -173,7 +184,9 @@ while True:
                             )
                         )
                     elif d_pad_y == 1 and d_pad_x == -1:
-                        logger.info(f"Tilting Down and Panning Left (speed={DEFAULT_SPEED})")
+                        logger.info(
+                            f"Tilting Down and Panning Left (speed={DEFAULT_SPEED})"
+                        )
                         camera.send_command_general_response(
                             camera.factory._standard(
                                 down=True,
@@ -183,7 +196,9 @@ while True:
                             )
                         )
                     elif d_pad_y == 1 and d_pad_x == 1:
-                        logger.info(f"Tilting Down and Panning Right (speed={DEFAULT_SPEED})")
+                        logger.info(
+                            f"Tilting Down and Panning Right (speed={DEFAULT_SPEED})"
+                        )
                         camera.send_command_general_response(
                             camera.factory._standard(
                                 down=True,
@@ -313,7 +328,9 @@ while True:
                             continue
 
                         zoom_speed: int = trigger_value_to_zoom_speed(event.value)
-                        prev_zoom_speed: int = trigger_value_to_zoom_speed(right_trigger)
+                        prev_zoom_speed: int = trigger_value_to_zoom_speed(
+                            right_trigger
+                        )
                         speed_diff: int = abs(zoom_speed - prev_zoom_speed)
 
                         right_trigger = event.value
@@ -333,7 +350,7 @@ while True:
 
         # XBox controller has disconnected, attempt to reconnect.
         try:
-            xbox_controller = get_xbox_controller()
+            xbox_controller = XBoxOneController(device_path=XBOX_CONTROLLER_DEVICE_PATH)
         except Exception as error:
             # XBox controller not available, give up for now.
             logger.error(error)
