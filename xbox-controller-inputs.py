@@ -153,7 +153,7 @@ while True:
                 elif d_pad_y == -1 and d_pad_x == -1:
                     logger.info(f"Tilting Up and Panning Left (speed={DEFAULT_SPEED})")
                     camera.send_command_general_response(
-                        camera.factory.standard(
+                        camera.factory._standard(
                             up=True,
                             left=True,
                             pan_speed=DEFAULT_SPEED,
@@ -163,7 +163,7 @@ while True:
                 elif d_pad_y == -1 and d_pad_x == 1:
                     logger.info(f"Tilting Up and Panning Right (speed={DEFAULT_SPEED})")
                     camera.send_command_general_response(
-                        camera.factory.standard(
+                        camera.factory._standard(
                             up=True,
                             right=True,
                             pan_speed=DEFAULT_SPEED,
@@ -173,7 +173,7 @@ while True:
                 elif d_pad_y == 1 and d_pad_x == -1:
                     logger.info(f"Tilting Down and Panning Left (speed={DEFAULT_SPEED})")
                     camera.send_command_general_response(
-                        camera.factory.standard(
+                        camera.factory._standard(
                             down=True,
                             left=True,
                             pan_speed=DEFAULT_SPEED,
@@ -183,7 +183,7 @@ while True:
                 elif d_pad_y == 1 and d_pad_x == 1:
                     logger.info(f"Tilting Down and Panning Right (speed={DEFAULT_SPEED})")
                     camera.send_command_general_response(
-                        camera.factory.standard(
+                        camera.factory._standard(
                             down=True,
                             right=True,
                             pan_speed=DEFAULT_SPEED,
@@ -242,7 +242,7 @@ while True:
                             f"Tilting Down and Panning Right (tilt_speed={speed_y}, pan_speed={speed_x})"
                         )
                         camera.send_command_general_response(
-                            camera.factory.standard(
+                            camera.factory._standard(
                                 down=True,
                                 right=True,
                                 pan_speed=speed_x,
@@ -254,7 +254,7 @@ while True:
                             f"Tilting Up and Panning Right (tilt_speed={abs(speed_y)}, pan_speed={speed_x})"
                         )
                         camera.send_command_general_response(
-                            camera.factory.standard(
+                            camera.factory._standard(
                                 up=True,
                                 right=True,
                                 pan_speed=speed_x,
@@ -266,7 +266,7 @@ while True:
                             f"Tilting Down and Panning Left (tilt_speed={speed_y}, pan_speed={abs(speed_x)})"
                         )
                         camera.send_command_general_response(
-                            camera.factory.standard(
+                            camera.factory._standard(
                                 down=True,
                                 left=True,
                                 pan_speed=abs(speed_x),
@@ -278,7 +278,7 @@ while True:
                             f"Tilting Up and Panning Left (tilt_speed={abs(speed_y)}, pan_speed={abs(speed_x)})"
                         )
                         camera.send_command_general_response(
-                            camera.factory.standard(
+                            camera.factory._standard(
                                 up=True,
                                 left=True,
                                 pan_speed=abs(speed_x),
