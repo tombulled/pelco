@@ -11,7 +11,10 @@ from .models import Event
 def get_gamepad(device_path: str) -> GamePad:
     gamepad: GamePad
     for gamepad in inputs.devices.gamepads:
-        if gamepad.get_char_device_path() == device_path:
+        if (
+            gamepad.get_char_device_path() == device_path
+            or gamepad._device_path == device_path
+        ):
             return gamepad
 
     raise InvalidDevicePath(f"Invalid device path: {device_path!r}")
