@@ -49,11 +49,11 @@ class FakeCamera:
         return lambda *args, **kwargs: None
 
 
-# camera = PelcoD(
-#     address=0x02,
-#     port=get_serial_device(),
-# )
-camera = FakeCamera()
+camera = PelcoD(
+    address=0x02,
+    port=get_serial_device(),
+)
+# camera = FakeCamera()
 
 xbox_controller = get_xbox_controller()
 
