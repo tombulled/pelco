@@ -57,7 +57,7 @@ camera = PelcoD(
 
 xbox_controller = get_xbox_controller()
 
-DEFAULT_SPEED: int = 0x10
+DEFAULT_SPEED: int = 0x1F
 
 
 def stick_value_to_speed(stick_value: int, /) -> int:
