@@ -1,2 +1,0 @@
-class InvalidDevicePath(Exception):
-    pass

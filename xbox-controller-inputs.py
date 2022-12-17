@@ -28,15 +28,6 @@ ZOOM_SPEED_STEP: int = 0x01
 STICK_THRESHOLD: float = 0.1  # Ignore the first 10%
 
 
-def get_xbox_controller():
-    controllers = find_controllers()
-
-    if controllers:
-        return controllers[0]
-    else:
-        raise Exception("Failed to find XBox Controller")
-
-
 def get_serial_device() -> str:
     comports = serial.tools.list_ports.comports()
 
