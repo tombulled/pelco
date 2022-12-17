@@ -329,5 +329,9 @@ while True:
         logger.error("Camera did not send a response, try again.")
         continue
     except OSError as error:
-        # XBox controller has disconnected, retrying.
-        continue
+        # XBox controller has disconnected, attempt to reconnect.
+        try:
+            xbox_controller = get_xbox_controller()
+        except Exception:
+            # XBox controller not available, give up for now.
+            continue
