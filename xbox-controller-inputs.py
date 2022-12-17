@@ -5,6 +5,7 @@ from loguru import logger
 from pelco.d.master import PelcoD
 from xboxonecontroller.discovery import find_controllers
 from xboxonecontroller.enums import Axis, Button, EventType
+from xboxonecontroller.models import Event
 
 SPEED_MAX: int = 2**6 - 1
 # SPEED_MAX: int = 0xF
@@ -96,7 +97,13 @@ d_pad_x: int = 0
 d_pad_y: int = 0
 
 while True:
-    for event in xbox_controller.read():
+    try:
+        events: Sequence[Event] = xbox_controller.read()
+    except OSError as error:
+        print("Error:", error)
+        continue
+
+    for event in events:
         if event.type == EventType.BUTTON:
             button: Button = event.subject
             down: bool = bool(event.value)
