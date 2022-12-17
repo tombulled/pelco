@@ -6,7 +6,7 @@ from pelco.d.master import PelcoD
 from xboxonecontroller.discovery import find_controllers
 from xboxonecontroller.enums import Axis, Button, EventType
 
-SPEED_MAX: int = 2**6
+SPEED_MAX: int = 2**6 - 1
 # SPEED_MAX: int = 0xF
 TRIGGER_MAX: int = 2**10
 STICK_MAX: int = 2**15
