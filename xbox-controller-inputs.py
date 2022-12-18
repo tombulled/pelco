@@ -127,6 +127,8 @@ while True:
             elif event.type == EventType.AXIS:
                 axis: Axis = event.subject
 
+                print(f"Axis Movement: {axis.name} -> {event.value}")
+
                 if axis in (Axis.D_PAD_X, Axis.D_PAD_Y):
                     if axis is Axis.D_PAD_X:
                         d_pad_x = event.value
