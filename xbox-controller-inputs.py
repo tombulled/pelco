@@ -2,6 +2,7 @@ from typing import Callable, Sequence
 
 import serial.tools.list_ports
 from loguru import logger
+from pelco.d.constants import PRESET_FLIP
 from pelco.d.errors import ResponseError
 from pelco.d.master import PelcoD
 from xboxonecontroller.controller import XBoxOneController
@@ -120,7 +121,8 @@ while True:
                         logger.info("Stopping motion")
                         camera.send(factory.stop())
                     elif button is Button.X:
-                        logger.info("X")  # TODO
+                        logger.info("Flipping 180 degrees")
+                        camera.send(factory.move_preset(PRESET_FLIP))
                     elif button is Button.Y:
                         logger.info("Y")
                     elif button is Button.RIGHT_BUMPER:
@@ -231,7 +233,7 @@ while True:
                         speed_y: int = stick_value_to_speed(left_stick_y)
 
                         if speed_x == 0 and speed_y == 0:
-                            logger.info("Stopping")
+                            logger.info("Stopping motion")
                             camera.send(factory.stop())
                         elif speed_x == 0 and speed_y > 0:
                             logger.info(f"Tilting Down (tilt_speed={speed_y})")
