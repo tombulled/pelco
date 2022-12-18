@@ -137,7 +137,7 @@ while True:
             elif event.type == EventType.AXIS:
                 axis: Axis = event.subject
 
-                print(f"Axis Movement: {axis.name} -> {event.value}")
+                # print(f"Axis Movement: {axis.name} -> {event.value}")
 
                 if axis in (Axis.D_PAD_X, Axis.D_PAD_Y):
                     if axis is Axis.D_PAD_X:
@@ -245,7 +245,6 @@ while True:
                                 camera.send(factory.stop())
                                 in_motion = False
                                 last_motion = 0
-                                delay()
                             continue
 
                         if speed_dx == 0 and speed_dy == 0:
