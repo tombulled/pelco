@@ -126,7 +126,7 @@ while True:
                     elif button is Button.B:  # Note: pointless as could flick a button?
                         logger.info("Stopping motion")
                         camera.send(factory.stop())
-                        camera.send(factory.stop())
+                        # camera.send(factory.stop())
                     elif button is Button.X:
                         logger.info("X")
                     elif button is Button.Y:
@@ -248,7 +248,7 @@ while True:
                                 logger.info("Stopping motion")
                                 delay()
                                 camera.send(factory.stop())
-                                camera.send(factory.stop())
+                                # camera.send(factory.stop())
                                 in_motion = False
                                 last_motion = time.time()
                             continue
