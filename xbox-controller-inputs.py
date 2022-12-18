@@ -20,7 +20,7 @@ ZOOM_SPEED_MIN: int = 0x00
 ZOOM_SPEED_MAX: int = 0x03
 ZOOM_SPEED_STEP: int = 0x01
 
-STICK_THRESHOLD: float = 0.2  # Ignore the first n%. Has been observed as high as 20%
+STICK_THRESHOLD: float = 0.17  # Ignore the first n%. Has been observed as high as ~20%
 
 
 def get_serial_device() -> str:
