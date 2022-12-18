@@ -96,6 +96,7 @@ right_trigger: int = 0
 d_pad_x: int = 0
 d_pad_y: int = 0
 in_motion: bool = False
+last_motion: float = 0
 
 while True:
     try:
@@ -243,6 +244,7 @@ while True:
                                 logger.info("Stopping motion")
                                 camera.send(factory.stop())
                                 in_motion = False
+                                last_motion = 0
                                 delay()
                             continue
 
@@ -250,26 +252,28 @@ while True:
                             # No significant difference, ignoring
                             continue
 
+                        print("Time since last movement:", time.time() - last_motion)
+
                         if speed_x is None and speed_y > 0:
                             logger.info(f"Tilting Down (tilt_speed={speed_y})")
                             camera.send(factory.tilt_down(speed_y))
                             in_motion = True
-                            delay()
+                            last_motion = time.time()
                         elif speed_x is None and speed_y < 0:
                             logger.info(f"Tilting Up (tilt_speed={abs(speed_y)})")
                             camera.send(factory.tilt_up(abs(speed_y)))
                             in_motion = True
-                            delay()
+                            last_motion = time.time()
                         elif speed_y is None and speed_x > 0:
                             logger.info(f"Panning Right (pan_speed={speed_x})")
                             camera.send(factory.pan_right(speed_x))
                             in_motion = True
-                            delay()
+                            last_motion = time.time()
                         elif speed_y is None and speed_x < 0:
                             logger.info(f"Panning Left (pan_speed={abs(speed_x)})")
                             camera.send(factory.pan_left(abs(speed_x)))
                             in_motion = True
-                            delay()
+                            last_motion = time.time()
                         elif speed_x > 0 and speed_y > 0:
                             logger.info(
                                 f"Tilting Down and Panning Right (tilt_speed={speed_y}, pan_speed={speed_x})"
@@ -283,7 +287,7 @@ while True:
                                 )
                             )
                             in_motion = True
-                            delay()
+                            last_motion = time.time()
                         elif speed_x > 0 and speed_y < 0:
                             logger.info(
                                 f"Tilting Up and Panning Right (tilt_speed={abs(speed_y)}, pan_speed={speed_x})"
@@ -297,7 +301,7 @@ while True:
                                 )
                             )
                             in_motion = True
-                            delay()
+                            last_motion = time.time()
                         elif speed_x < 0 and speed_y > 0:
                             logger.info(
                                 f"Tilting Down and Panning Left (tilt_speed={speed_y}, pan_speed={abs(speed_x)})"
@@ -311,7 +315,7 @@ while True:
                                 )
                             )
                             in_motion = True
-                            delay()
+                            last_motion = time.time()
                         elif speed_x < 0 and speed_y < 0:
                             logger.info(
                                 f"Tilting Up and Panning Left (tilt_speed={abs(speed_y)}, pan_speed={abs(speed_x)})"
@@ -325,7 +329,7 @@ while True:
                                 )
                             )
                             in_motion = True
-                            delay()
+                            last_motion = time.time()
                     elif axis is Axis.LEFT_TRIGGER:
                         if event.value == 0:
                             logger.info("Stopping motion")
