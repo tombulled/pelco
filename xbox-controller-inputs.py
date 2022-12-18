@@ -220,12 +220,12 @@ while True:
                             )
                             left_stick_y = event.value
 
+                        speed_x: int = stick_value_to_speed(left_stick_x)
+                        speed_y: int = stick_value_to_speed(left_stick_y)
+
                         if speed_dx == 0 and speed_dy == 0:
                             # No significant difference, ignoring
                             continue
-
-                        speed_x: int = stick_value_to_speed(left_stick_x)
-                        speed_y: int = stick_value_to_speed(left_stick_y)
 
                         if speed_x == 0 and speed_y == 0:
                             logger.info("Stopping motion")
