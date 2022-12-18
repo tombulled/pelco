@@ -232,6 +232,7 @@ while True:
                         if speed_x is None and speed_y is None:
                             logger.info("Stopping motion")
                             camera.send(factory.stop())
+                            continue
 
                         if speed_dx == 0 and speed_dy == 0:
                             # No significant difference, ignoring
