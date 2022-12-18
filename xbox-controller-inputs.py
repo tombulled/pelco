@@ -72,7 +72,9 @@ def stick_value_to_speed(value: int, /) -> Optional[int]:
     if normalised_value <= STICK_THRESHOLD:
         return None
 
-    speed_index: int = round(normalised_value * max_index)
+    normalised_value_2: float = (normalised_value - STICK_THRESHOLD) / (1 - STICK_THRESHOLD)
+
+    speed_index: int = round(normalised_value_2 * max_index)
 
     return sign * speeds[speed_index]
 
