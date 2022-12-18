@@ -15,7 +15,7 @@ STICK_MAX: int = 2**15
 # Pan and tilt speed
 SPEED_MIN: int = 0x0F # can't be 0 as breaks logic
 SPEED_MAX: int = 0x3F
-SPEED_STEP: int = 0x02
+SPEED_STEP: int = 0x01
 
 ZOOM_SPEED_MIN: int = 0x00
 ZOOM_SPEED_MAX: int = 0x03
