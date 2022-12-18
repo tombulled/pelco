@@ -246,10 +246,11 @@ while True:
                         if speed_x is None and speed_y is None:
                             if in_motion:
                                 logger.info("Stopping motion")
+                                delay()
                                 camera.send(factory.stop())
                                 camera.send(factory.stop())
                                 in_motion = False
-                                last_motion = 0
+                                last_motion = time.time()
                             continue
 
                         if speed_dx == 0 and speed_dy == 0:
