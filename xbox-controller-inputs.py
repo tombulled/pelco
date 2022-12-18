@@ -25,7 +25,8 @@ STICK_THRESHOLD: float = 0.17  # Ignore the first n%. Has been observed as high 
 
 # To ensure that no "confusion" occurs in the Pelco receiving equipment, a delay of at
 # least 300 milliseconds must be inserted between sending commands
-SEND_COMMAND_DELAY: float = 0.3 # Delay in seconds
+# SEND_COMMAND_DELAY: float = 0.3 # Delay in seconds
+SEND_COMMAND_DELAY: int = 300 # Delay in ms
 
 def delay() -> None:
     time.sleep(SEND_COMMAND_DELAY)
