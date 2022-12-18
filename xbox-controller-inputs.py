@@ -249,10 +249,14 @@ while True:
                             continue
 
                         if speed_dx == 0 and speed_dy == 0:
-                            # No significant difference, ignoring
+                            # No significant difference, ignoring.
                             continue
 
-                        print("Time since last movement (ms):", round((time.time() - last_motion) * 1000))
+                        # Motion event received too soon, ignoring.
+                        if round((time.time() - last_motion) * 1000) < SEND_COMMAND_DELAY:
+                            continue
+
+                        # print("Time since last movement (ms):", round((time.time() - last_motion) * 1000))
 
                         if speed_x is None and speed_y > 0:
                             logger.info(f"Tilting Down (tilt_speed={speed_y})")
