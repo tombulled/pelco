@@ -8,18 +8,13 @@ from pelco.d.master import PelcoD
 from xboxonecontroller.controller import XBoxOneController
 from xboxonecontroller.enums import Axis, Button, EventType
 
-SPEED_MAX: int = 2**6 - 1
-# SPEED_MAX: int = 0xF
 TRIGGER_MAX: int = 2**10
 STICK_MAX: int = 2**15
 
-PAN_SPEED_MIN: int = 0x00
-PAN_SPEED_MAX: int = 0x3F
-PAN_SPEED_STEP: int = 0x01
-
-TILT_SPEED_MIN: int = 0x00
-TILT_SPEED_MAX: int = 0x3F
-TILT_SPEED_STEP: int = 0x01
+# Pan and tilt speed
+SPEED_MIN: int = 0x00
+SPEED_MAX: int = 0x3F
+SPEED_STEP: int = 0x01
 
 ZOOM_SPEED_MIN: int = 0x00
 ZOOM_SPEED_MAX: int = 0x03
@@ -57,22 +52,20 @@ xbox_controller = XBoxOneController(device_path=XBOX_CONTROLLER_DEVICE_PATH)
 DEFAULT_SPEED: int = 0x1F
 
 
-def stick_value_to_speed(stick_value: int, /) -> int:
-    normalised_value: float = stick_value / STICK_MAX
+def stick_value_to_speed(value: int, /) -> int:
+    speeds: Sequence[int] = tuple(
+        range(SPEED_MIN, SPEED_MAX + 1, SPEED_STEP)
+    )
+    max_index: int = len(speeds) - 1
+    sign: int = -1 if value < 0 else 1
+    normalised_value: float = abs(value) / STICK_MAX
 
-    if abs(normalised_value) <= STICK_THRESHOLD:
-        normalised_value = 0
-    else:
-        if normalised_value > 0:
-            normalised_value = (normalised_value - STICK_THRESHOLD) / (
-                1 - STICK_THRESHOLD
-            )
-        else:
-            normalised_value = (normalised_value + STICK_THRESHOLD) / (
-                1 - STICK_THRESHOLD
-            )
+    if normalised_value <= STICK_THRESHOLD:
+        return 0
 
-    return round(normalised_value * SPEED_MAX)
+    speed_index: int = round(normalised_value * max_index)
+
+    return sign * speeds[speed_index]
 
 
 def trigger_value_to_zoom_speed(value: int, /) -> int:
