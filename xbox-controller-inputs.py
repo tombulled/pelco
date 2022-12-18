@@ -87,6 +87,7 @@ left_trigger: int = 0
 right_trigger: int = 0
 d_pad_x: int = 0
 d_pad_y: int = 0
+in_motion: bool = False
 
 while True:
     try:
@@ -230,8 +231,10 @@ while True:
                         speed_y: Optional[int] = stick_value_to_speed(left_stick_y)
 
                         if speed_x is None and speed_y is None:
-                            logger.info("Stopping motion")
-                            camera.send(factory.stop())
+                            if in_motion:
+                                logger.info("Stopping motion")
+                                camera.send(factory.stop())
+                                in_motion = False
                             continue
 
                         if speed_dx == 0 and speed_dy == 0:
@@ -241,15 +244,19 @@ while True:
                         if speed_x is None and speed_y > 0:
                             logger.info(f"Tilting Down (tilt_speed={speed_y})")
                             camera.send(factory.tilt_down(speed_y))
+                            in_motion = True
                         elif speed_x is None and speed_y < 0:
                             logger.info(f"Tilting Up (tilt_speed={abs(speed_y)})")
                             camera.send(factory.tilt_up(abs(speed_y)))
+                            in_motion = True
                         elif speed_y is None and speed_x > 0:
                             logger.info(f"Panning Right (pan_speed={speed_x})")
                             camera.send(factory.pan_right(speed_x))
+                            in_motion = True
                         elif speed_y is None and speed_x < 0:
                             logger.info(f"Panning Left (pan_speed={abs(speed_x)})")
                             camera.send(factory.pan_left(abs(speed_x)))
+                            in_motion = True
                         elif speed_x > 0 and speed_y > 0:
                             logger.info(
                                 f"Tilting Down and Panning Right (tilt_speed={speed_y}, pan_speed={speed_x})"
@@ -262,6 +269,7 @@ while True:
                                     tilt_speed=speed_y,
                                 )
                             )
+                            in_motion = True
                         elif speed_x > 0 and speed_y < 0:
                             logger.info(
                                 f"Tilting Up and Panning Right (tilt_speed={abs(speed_y)}, pan_speed={speed_x})"
@@ -274,6 +282,7 @@ while True:
                                     tilt_speed=abs(speed_y),
                                 )
                             )
+                            in_motion = True
                         elif speed_x < 0 and speed_y > 0:
                             logger.info(
                                 f"Tilting Down and Panning Left (tilt_speed={speed_y}, pan_speed={abs(speed_x)})"
@@ -286,6 +295,7 @@ while True:
                                     tilt_speed=speed_y,
                                 )
                             )
+                            in_motion = True
                         elif speed_x < 0 and speed_y < 0:
                             logger.info(
                                 f"Tilting Up and Panning Left (tilt_speed={abs(speed_y)}, pan_speed={abs(speed_x)})"
@@ -298,6 +308,7 @@ while True:
                                     tilt_speed=abs(speed_y),
                                 )
                             )
+                            in_motion = True
                     elif axis is Axis.LEFT_TRIGGER:
                         if event.value == 0:
                             logger.info("Stopping motion")
