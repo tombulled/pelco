@@ -29,7 +29,7 @@ STICK_THRESHOLD: float = 0.17  # Ignore the first n%. Has been observed as high 
 SEND_COMMAND_DELAY: int = 300 # Delay in ms
 
 def delay() -> None:
-    time.sleep(SEND_COMMAND_DELAY)
+    time.sleep(0.3)
 
 
 def get_serial_device() -> str:
