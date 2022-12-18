@@ -101,6 +101,8 @@ last_motion: float = 0
 while True:
     try:
         for event in xbox_controller.read():
+            event_time: float = time.time()
+
             if event.type == EventType.BUTTON:
                 button: Button = event.subject
                 down: bool = bool(event.value)
@@ -251,10 +253,10 @@ while True:
                             # No significant difference, ignoring.
                             continue
 
-                        print("Time since last movement (ms):", round((time.time() - last_motion) * 1000))
-                        
+                        print("Time since last movement (ms):", round((event_time - last_motion) * 1000))
+
                         # Motion event received too soon, ignoring.
-                        if round((time.time() - last_motion) * 1000) < SEND_COMMAND_DELAY:
+                        if round((event_time - last_motion) * 1000) < SEND_COMMAND_DELAY:
                             continue
 
 
