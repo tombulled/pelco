@@ -12,7 +12,7 @@ TRIGGER_MAX: int = 2**10
 STICK_MAX: int = 2**15
 
 # Pan and tilt speed
-SPEED_MIN: int = 0x00
+SPEED_MIN: int = 0x1F
 SPEED_MAX: int = 0x3F
 SPEED_STEP: int = 0x01
 
@@ -20,7 +20,7 @@ ZOOM_SPEED_MIN: int = 0x00
 ZOOM_SPEED_MAX: int = 0x03
 ZOOM_SPEED_STEP: int = 0x01
 
-STICK_THRESHOLD: float = 0.1  # Ignore the first 10%
+STICK_THRESHOLD: float = 0.2  # Ignore the first 10%
 
 
 def get_serial_device() -> str:
