@@ -229,14 +229,15 @@ while True:
                         speed_x: Optional[int] = stick_value_to_speed(left_stick_x)
                         speed_y: Optional[int] = stick_value_to_speed(left_stick_y)
 
+                        if speed_x is None and speed_y is None:
+                            logger.info("Stopping motion")
+                            camera.send(factory.stop())
+
                         if speed_dx == 0 and speed_dy == 0:
                             # No significant difference, ignoring
                             continue
 
-                        if speed_x is None and speed_y is None:
-                            logger.info("Stopping motion")
-                            camera.send(factory.stop())
-                        elif speed_x is None and speed_y > 0:
+                        if speed_x is None and speed_y > 0:
                             logger.info(f"Tilting Down (tilt_speed={speed_y})")
                             camera.send(factory.tilt_down(speed_y))
                         elif speed_x is None and speed_y < 0:
