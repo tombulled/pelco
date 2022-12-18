@@ -1,4 +1,4 @@
-from typing import Callable, Sequence
+from typing import Callable, Optional, Sequence
 
 import serial.tools.list_ports
 from loguru import logger
@@ -12,7 +12,7 @@ TRIGGER_MAX: int = 2**10
 STICK_MAX: int = 2**15
 
 # Pan and tilt speed
-SPEED_MIN: int = 0x1F
+SPEED_MIN: int = 0x1F # can't be 0 as breaks logic
 SPEED_MAX: int = 0x3F
 SPEED_STEP: int = 0x01
 
@@ -52,7 +52,7 @@ xbox_controller = XBoxOneController(device_path=XBOX_CONTROLLER_DEVICE_PATH)
 DEFAULT_SPEED: int = 0x1F
 
 
-def stick_value_to_speed(value: int, /) -> int:
+def stick_value_to_speed(value: int, /) -> Optional[int]:
     speeds: Sequence[int] = tuple(
         range(SPEED_MIN, SPEED_MAX + 1, SPEED_STEP)
     )
@@ -61,7 +61,7 @@ def stick_value_to_speed(value: int, /) -> int:
     normalised_value: float = abs(value) / STICK_MAX
 
     if normalised_value <= STICK_THRESHOLD:
-        return 0
+        return None
 
     speed_index: int = round(normalised_value * max_index)
 
@@ -200,46 +200,52 @@ while True:
                         camera.send(factory.stop())
                 else:
                     if axis in (Axis.LEFT_STICK_X, Axis.LEFT_STICK_Y):
-                        dx: int = 0
-                        dy: int = 0
+                        pre_left_stick_x: int = left_stick_x
+                        pre_left_stick_y: int = left_stick_y
                         speed_dx: int = 0
                         speed_dy: int = 0
 
                         if axis is Axis.LEFT_STICK_X:
-                            dx = abs(abs(left_stick_x) - abs(event.value))
-                            speed_dx = abs(
-                                abs(stick_value_to_speed(left_stick_x))
-                                - abs(stick_value_to_speed(event.value))
-                            )
                             left_stick_x = event.value
-                        elif axis is Axis.LEFT_STICK_Y:
-                            dy = abs(abs(left_stick_y) - abs(event.value))
-                            speed_dy = abs(
-                                abs(stick_value_to_speed(left_stick_y))
-                                - abs(stick_value_to_speed(event.value))
+
+                            pre_speed: int = stick_value_to_speed(pre_left_stick_x) or 0
+                            speed: int = stick_value_to_speed(left_stick_x) or 0
+
+                            speed_dx = abs(
+                                abs(pre_speed)
+                                - abs(speed)
                             )
+                        elif axis is Axis.LEFT_STICK_Y:
                             left_stick_y = event.value
 
-                        speed_x: int = stick_value_to_speed(left_stick_x)
-                        speed_y: int = stick_value_to_speed(left_stick_y)
+                            pre_speed: int = stick_value_to_speed(pre_left_stick_y) or 0
+                            speed: int = stick_value_to_speed(left_stick_y) or 0
+
+                            speed_dy = abs(
+                                abs(pre_speed)
+                                - abs(speed)
+                            )
+
+                        speed_x: Optional[int] = stick_value_to_speed(left_stick_x)
+                        speed_y: Optional[int] = stick_value_to_speed(left_stick_y)
 
                         if speed_dx == 0 and speed_dy == 0:
                             # No significant difference, ignoring
                             continue
 
-                        if speed_x == 0 and speed_y == 0:
+                        if speed_x is None and speed_y is None:
                             logger.info("Stopping motion")
                             camera.send(factory.stop())
-                        elif speed_x == 0 and speed_y > 0:
+                        elif speed_x is None and speed_y > 0:
                             logger.info(f"Tilting Down (tilt_speed={speed_y})")
                             camera.send(factory.tilt_down(speed_y))
-                        elif speed_x == 0 and speed_y < 0:
+                        elif speed_x is None and speed_y < 0:
                             logger.info(f"Tilting Up (tilt_speed={abs(speed_y)})")
                             camera.send(factory.tilt_up(abs(speed_y)))
-                        elif speed_y == 0 and speed_x > 0:
+                        elif speed_y is None and speed_x > 0:
                             logger.info(f"Panning Right (pan_speed={speed_x})")
                             camera.send(factory.pan_right(speed_x))
-                        elif speed_y == 0 and speed_x < 0:
+                        elif speed_y is None and speed_x < 0:
                             logger.info(f"Panning Left (pan_speed={abs(speed_x)})")
                             camera.send(factory.pan_left(abs(speed_x)))
                         elif speed_x > 0 and speed_y > 0:
