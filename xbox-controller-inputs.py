@@ -126,11 +126,12 @@ while True:
                     elif button is Button.B:  # Note: pointless as could flick a button?
                         logger.info("Stopping motion")
                         camera.send(factory.stop())
+                        camera.send(factory.stop())
                     elif button is Button.X:
+                        logger.info("X")
+                    elif button is Button.Y:
                         logger.info("Flipping 180 degrees")
                         camera.send(factory.move_preset(PRESET_FLIP))
-                    elif button is Button.Y:
-                        logger.info("Y")
                     elif button is Button.RIGHT_BUMPER:
                         logger.info("Stopping motion")
                         camera.send(factory.stop())
@@ -245,6 +246,7 @@ while True:
                         if speed_x is None and speed_y is None:
                             if in_motion:
                                 logger.info("Stopping motion")
+                                camera.send(factory.stop())
                                 camera.send(factory.stop())
                                 in_motion = False
                                 last_motion = 0
