@@ -142,5 +142,6 @@ def validate_line_lock_phase_delay(value: int, /) -> None:
 def validate_white_balance_rb(value: int, /) -> None:
     validate_in_range(value, MIN_WHITE_BALANCE_RB, MAX_WHITE_BALANCE_RB)
 
+
 def validate_white_balance_mg(value: int, /) -> None:
     validate_in_range(value, MIN_WHITE_BALANCE_MG, MAX_WHITE_BALANCE_MG)

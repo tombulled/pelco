@@ -1,16 +1,20 @@
 from typing import Final
 
+
+def _max_value(total_bits: int, /) -> int:
+    return 2**total_bits - 1
+
+
 UINT8_SIZE: Final[int] = 8
-UINT8_MIN: Final[int] = 0x00
-UINT8_MAX: Final[int] = 2 ** UINT8_SIZE - 1
+UINT8_MIN: Final[int] = 0
+UINT8_MAX: Final[int] = _max_value(UINT8_SIZE)
 
 UINT16_SIZE: Final[int] = 16
-UINT16_MIN: Final[int] = 0x00
-UINT16_MAX: Final[int] = 2 ** UINT16_SIZE - 1
+UINT16_MIN: Final[int] = 0
+UINT16_MAX: Final[int] = _max_value(UINT16_SIZE)
 
 UNSET: Final[int] = 0x00
 DEFAULT_ADDRESS: Final[int] = 0x01
-
 SYNC: Final[int] = 0xFF
 
 MIN_ADDRESS: Final[int] = 0x01
@@ -86,6 +90,14 @@ D_C_LEFT: Final[int] = 0b00000100
 D_C_RIGHT: Final[int] = 0b00000010
 D_C_RESERVED_0: Final[int] = 0b00000001
 
+D_COMMAND_SYNC: Final[int] = 0x00
+D_COMMAND_ADDR: Final[int] = 0x01
+D_COMMAND_CMD1: Final[int] = 0x02
+D_COMMAND_CMD2: Final[int] = 0x03
+D_COMMAND_DATA1: Final[int] = 0x04
+D_COMMAND_DATA2: Final[int] = 0x05
+D_COMMAND_CKSM: Final[int] = 0x06
+
 D_REPLY_SYNC: Final[int] = 0x00
 D_REPLY_ADDR: Final[int] = 0x01
 D_REPLY_CMD1: Final[int] = 0x02
@@ -94,11 +106,12 @@ D_REPLY_DATA1: Final[int] = 0x04
 D_REPLY_DATA2: Final[int] = 0x05
 D_REPLY_CKSM: Final[int] = 0x06
 
+D_SEND_COMMAND_LENGTH: Final[int] = 7
+
 D_EC_GENERAL_REPLY_LENGTH: Final[int] = 4
 D_EC_EXTENDED_REPLY_LENGTH: Final[int] = 7
 D_EC_QUERY_REPLY_LENGTH: Final[int] = 18
 
-# Extended Commands
 D_EC_STD_EXT_RESP: Final[int] = 0x01
 D_EC_SET_PRESET: Final[int] = 0x03
 D_EC_CLEAR_PRESET: Final[int] = 0x05
@@ -250,7 +263,6 @@ D_ECD_EVEREST_SCAN_RIGHT_PAN: Final[int] = 0x03
 D_ECD_EVEREST_ENABLE_LIMITS_DISABLE: Final[int] = 0x00
 D_ECD_EVEREST_ENABLE_LIMITS_ENABLE: Final[int] = 0x01
 
-# Typical Predefined Presets
 PRESET_FLIP: Final[int] = 0x21
 PRESET_ZERO: Final[int] = 0x22
 PRESET_AUX1: Final[int] = 0x54

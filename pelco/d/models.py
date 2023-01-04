@@ -1,60 +1,76 @@
 from dataclasses import dataclass, field
+from typing import Iterable, Tuple
 
-from .constants import SYNC
-from .errors import ResponseError
+from .constants import (
+    SYNC,
+    UNSET,
+    D_COMMAND_SYNC,
+    D_COMMAND_ADDR,
+    D_COMMAND_CMD1,
+    D_COMMAND_CMD2,
+    D_COMMAND_DATA1,
+    D_COMMAND_DATA2,
+    D_COMMAND_CKSM,
+    D_SEND_COMMAND_LENGTH,
+)
+from .errors import ChecksumError, ResponseError
 from .utils import calculate_checksum
+from .validators import validate_all_uint8
 
 
 @dataclass(frozen=True, eq=True)
-class SendCommandModel:
-    # sync: int = SYNC  # SYNC
-    address: int = 0x00  # ADDR
-    command_1: int = 0x00  # CMND1
-    command_2: int = 0x00  # CMND2
-    data_1: int = 0x00  # DATA1
-    data_2: int = 0x00  # DATA2
-    # checksum: int = 0x00  # CKSM
+class PelcoDCommand:
+    sync: int = UNSET
+    address: int = UNSET
+    command_1: int = UNSET
+    command_2: int = UNSET
+    data_1: int = UNSET
+    data_2: int = UNSET
+    checksum: int = UNSET
 
-    def calculate_crc(self) -> int:
-        return calculate_checksum(
-            (
-                self.address,
-                self.command_1,
-                self.command_2,
-                self.data_1,
-                self.data_2,
-            )
+    def __iter__(self) -> Iterable[int]:
+        return iter(self.as_tuple())
+
+    def as_tuple(self) -> Tuple[int, ...]:
+        return (
+            self.sync,
+            self.address,
+            self.command_1,
+            self.command_2,
+            self.data_1,
+            self.data_2,
+            self.checksum,
         )
+
+    def calculate_checksum(self) -> int:
+        return calculate_checksum(self.as_tuple()[1:-1])
 
     def serialise(self) -> bytearray:
-        return bytearray(
-            (
-                SYNC,
-                self.address,
-                self.command_1,
-                self.command_2,
-                self.data_1,
-                self.data_2,
-                self.calculate_crc(),
-            )
-        )
+        return bytearray(self.as_tuple())
 
     @classmethod
-    def deserialise(cls, command: bytes, /) -> "SendCommandModel":
-        assert len(command) == 7
-        assert command[0] == SYNC
+    def deserialise(cls, command: bytes, /) -> "PelcoDCommand":
+        assert len(command) == D_SEND_COMMAND_LENGTH
 
-        model: SendCommandModel = cls(
-            address=command[1],
-            command_1=command[2],
-            command_2=command[3],
-            data_1=command[4],
-            data_2=command[5],
+        model: PelcoDCommand = cls(
+            sync=command[D_COMMAND_SYNC],
+            address=command[D_COMMAND_ADDR],
+            command_1=command[D_COMMAND_CMD1],
+            command_2=command[D_COMMAND_CMD2],
+            data_1=command[D_COMMAND_DATA1],
+            data_2=command[D_COMMAND_DATA2],
+            checksum=command[D_COMMAND_CKSM],
         )
 
-        assert model.calculate_crc() == command[6]
-
         return model
+
+    def validate(self) -> None:
+        validate_all_uint8(*self.as_tuple())
+
+        if self.calculate_checksum() != self.checksum:
+            raise ChecksumError(
+                expected=self.calculate_checksum(), actual=self.checksum
+            )
 
 
 # aka. "General Reply"

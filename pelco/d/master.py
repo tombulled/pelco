@@ -10,13 +10,13 @@ from .enums import (
     ZoomSpeed,
 )
 from .errors import ResponseError
-from .factory import CommandFactory
-from .models import ExtendedResponse, GeneralResponse, SendCommandModel
+from .factory import PelcoDCommandFactory
+from .models import ExtendedResponse, GeneralResponse, PelcoDCommand
 
 
 class PelcoD:
     address: int
-    factory: CommandFactory
+    factory: PelcoDCommandFactory
     conn: Serial
 
     def __init__(
@@ -28,13 +28,13 @@ class PelcoD:
         timeout: int = 1,
     ) -> None:
         self.address = address
-        self.factory = CommandFactory(address=address)
+        self.factory = PelcoDCommandFactory(address=address)
         self.conn = Serial(port=port, baudrate=baudrate, timeout=timeout)
 
     def __repr__(self) -> str:
         return f"{type(self).__name__}(address={self.address})"
 
-    def send(self, command: SendCommandModel, /) -> None:
+    def send(self, command: PelcoDCommand, /) -> None:
         self.conn.write(command.serialise())
 
     def read(self, size: int = 1, /) -> bytes:
@@ -46,14 +46,14 @@ class PelcoD:
         return response
 
     def send_command_general_response(
-        self, command: SendCommandModel, /
+        self, command: PelcoDCommand, /
     ) -> GeneralResponse:
         self.send(command)
 
         return GeneralResponse.deserialise(self.read(D_EC_GENERAL_REPLY_LENGTH))
 
     def send_command_extended_response(
-        self, command: SendCommandModel, *, expected_response_opcode: int
+        self, command: PelcoDCommand, *, expected_response_opcode: int
     ) -> ExtendedResponse:
         self.send(command)
 
@@ -321,7 +321,7 @@ class PelcoD:
         )
 
     def query(self, query_type: int = 0x00):
-        command: SendCommandModel = self.factory.query(query_type)
+        command: PelcoDCommand = self.factory.query(query_type)
 
         self.conn.write(command.serialise())
 

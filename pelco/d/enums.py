@@ -1,5 +1,26 @@
 from enum import IntEnum
 
+from .constants import (
+    D_ECD_ZOOM_SPEED_SLOW,
+    D_ECD_ZOOM_SPEED_MEDIUM,
+    D_ECD_ZOOM_SPEED_FAST,
+    D_ECD_ZOOM_SPEED_FASTEST,
+    D_ECD_FOCUS_SPEED_SLOW,
+    D_ECD_FOCUS_SPEED_MEDIUM,
+    D_ECD_FOCUS_SPEED_FAST,
+    D_ECD_FOCUS_SPEED_FASTEST,
+    D_ECD_AUTO_FOCUS_AUTO,
+    D_ECD_AUTO_FOCUS_OFF,
+    D_ECD_AUTO_IRIS_AUTO,
+    D_ECD_AUTO_IRIS_OFF,
+    D_ECD_AUTO_AGC_AUTO,
+    D_ECD_AUTO_AGC_OFF,
+    D_ECD_AUTO_BLC_OFF,
+    D_ECD_AUTO_BLC_ON,
+    D_ECD_AUTO_AWB_ON,
+    D_ECD_AUTO_AWB_OFF,
+)
+
 
 class PanSpeed(IntEnum):
     VERY_SLOW: int = 0x00
@@ -16,45 +37,6 @@ class TiltSpeed(IntEnum):
     MEDIUM: int = 0x1F
     FAST: int = 0x2F
     VERY_FAST = 0x3F
-
-
-class ZoomSpeed(IntEnum):
-    SLOW: int = 0x00
-    MEDIUM: int = 0x01
-    FAST: int = 0x02
-    FASTEST: int = 0x03
-
-
-class FocusSpeed(IntEnum):
-    SLOW: int = 0x00
-    MEDIUM: int = 0x01
-    FAST: int = 0x02
-    FASTEST: int = 0x03
-
-
-class AutoFocusMode(IntEnum):
-    AUTO: int = 0x00
-    OFF: int = 0x01
-
-
-class AutoIrisMode(IntEnum):
-    AUTO: int = 0x00
-    OFF: int = 0x01
-
-
-class AutomaticGainControlMode(IntEnum):
-    AUTO: int = 0x00
-    OFF: int = 0x01
-
-
-class BacklightCompensationMode(IntEnum):
-    OFF: int = 0x00
-    ON: int = 0x01
-
-
-class AutoWhiteBalanceMode(IntEnum):
-    OFF: int = 0x01
-    ON: int = 0x02
 
 
 class PanPosition(IntEnum):
@@ -79,6 +61,45 @@ class TiltPosition(IntEnum):
     D_270: int = 270 * 100
     D_315: int = 315 * 100
     D_360: int = 360 * 100 - 1
+
+
+class ZoomSpeed(IntEnum):
+    SLOW: int = D_ECD_ZOOM_SPEED_SLOW
+    MEDIUM: int = D_ECD_ZOOM_SPEED_MEDIUM
+    FAST: int = D_ECD_ZOOM_SPEED_FAST
+    VERY_FAST: int = D_ECD_ZOOM_SPEED_FASTEST
+
+
+class FocusSpeed(IntEnum):
+    SLOW: int = D_ECD_FOCUS_SPEED_SLOW
+    MEDIUM: int = D_ECD_FOCUS_SPEED_MEDIUM
+    FAST: int = D_ECD_FOCUS_SPEED_FAST
+    VERY_FAST: int = D_ECD_FOCUS_SPEED_FASTEST
+
+
+class AutoFocusMode(IntEnum):
+    AUTO: int = D_ECD_AUTO_FOCUS_AUTO
+    OFF: int = D_ECD_AUTO_FOCUS_OFF
+
+
+class AutoIrisMode(IntEnum):
+    AUTO: int = D_ECD_AUTO_IRIS_AUTO
+    OFF: int = D_ECD_AUTO_IRIS_OFF
+
+
+class AutomaticGainControlMode(IntEnum):
+    AUTO: int = D_ECD_AUTO_AGC_AUTO
+    OFF: int = D_ECD_AUTO_AGC_OFF
+
+
+class BacklightCompensationMode(IntEnum):
+    OFF: int = D_ECD_AUTO_BLC_OFF
+    ON: int = D_ECD_AUTO_BLC_ON
+
+
+class AutoWhiteBalanceMode(IntEnum):
+    ON: int = D_ECD_AUTO_AWB_ON
+    OFF: int = D_ECD_AUTO_AWB_OFF
 
 
 class LineLockPhaseDelayMode(IntEnum):
