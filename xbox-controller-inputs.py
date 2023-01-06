@@ -1,8 +1,9 @@
-from typing import Callable, Optional, Sequence
 import time
+from typing import Callable, Optional, Sequence
 
 import serial.tools.list_ports
 from loguru import logger
+
 from pelco.d.constants import PRESET_FLIP
 from pelco.d.errors import ResponseError
 from pelco.d.master import PelcoD
@@ -13,7 +14,7 @@ TRIGGER_MAX: int = 2**10
 STICK_MAX: int = 2**15
 
 # Pan and tilt speed
-SPEED_MIN: int = 0x0F # can't be 0 as breaks logic
+SPEED_MIN: int = 0x0F  # can't be 0 as breaks logic
 SPEED_MAX: int = 0x2F
 SPEED_STEP: int = 0x01
 
@@ -26,7 +27,8 @@ STICK_THRESHOLD: float = 0.17  # Ignore the first n%. Has been observed as high 
 # To ensure that no "confusion" occurs in the Pelco receiving equipment, a delay of at
 # least 300 milliseconds must be inserted between sending commands
 # SEND_COMMAND_DELAY: float = 0.3 # Delay in seconds
-SEND_COMMAND_DELAY: int = 300 # Delay in ms
+SEND_COMMAND_DELAY: int = 300  # Delay in ms
+
 
 def delay() -> None:
     time.sleep(0.3)
@@ -62,9 +64,7 @@ DEFAULT_SPEED: int = 0x1F
 
 
 def stick_value_to_speed(value: int, /) -> Optional[int]:
-    speeds: Sequence[int] = tuple(
-        range(SPEED_MIN, SPEED_MAX + 1, SPEED_STEP)
-    )
+    speeds: Sequence[int] = tuple(range(SPEED_MIN, SPEED_MAX + 1, SPEED_STEP))
     max_index: int = len(speeds) - 1
     sign: int = -1 if value < 0 else 1
     normalised_value: float = abs(value) / STICK_MAX
@@ -72,7 +72,9 @@ def stick_value_to_speed(value: int, /) -> Optional[int]:
     if normalised_value <= STICK_THRESHOLD:
         return None
 
-    normalised_value_2: float = (normalised_value - STICK_THRESHOLD) / (1 - STICK_THRESHOLD)
+    normalised_value_2: float = (normalised_value - STICK_THRESHOLD) / (
+        1 - STICK_THRESHOLD
+    )
 
     speed_index: int = round(normalised_value_2 * max_index)
 
@@ -227,20 +229,14 @@ while True:
                             pre_speed: int = stick_value_to_speed(pre_left_stick_x) or 0
                             speed: int = stick_value_to_speed(left_stick_x) or 0
 
-                            speed_dx = abs(
-                                abs(pre_speed)
-                                - abs(speed)
-                            )
+                            speed_dx = abs(abs(pre_speed) - abs(speed))
                         elif axis is Axis.LEFT_STICK_Y:
                             left_stick_y = event.value
 
                             pre_speed: int = stick_value_to_speed(pre_left_stick_y) or 0
                             speed: int = stick_value_to_speed(left_stick_y) or 0
 
-                            speed_dy = abs(
-                                abs(pre_speed)
-                                - abs(speed)
-                            )
+                            speed_dy = abs(abs(pre_speed) - abs(speed))
 
                         speed_x: Optional[int] = stick_value_to_speed(left_stick_x)
                         speed_y: Optional[int] = stick_value_to_speed(left_stick_y)
@@ -259,12 +255,17 @@ while True:
                             # No significant difference, ignoring.
                             continue
 
-                        print("Time since last movement (ms):", round((event_time - last_motion) * 1000))
+                        print(
+                            "Time since last movement (ms):",
+                            round((event_time - last_motion) * 1000),
+                        )
 
                         # Motion event received too soon, ignoring.
-                        if round((event_time - last_motion) * 1000) < SEND_COMMAND_DELAY:
+                        if (
+                            round((event_time - last_motion) * 1000)
+                            < SEND_COMMAND_DELAY
+                        ):
                             continue
-
 
                         if speed_x is None and speed_y > 0:
                             logger.info(f"Tilting Down (tilt_speed={speed_y})")

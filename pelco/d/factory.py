@@ -3,27 +3,6 @@ from typing import Final
 
 from . import utils
 from .constants import (
-    D_EC_DUMMY_1,
-    D_ECD_AUTO_AGC_AUTO,
-    D_ECD_AUTO_AGC_OFF,
-    D_ECD_AUTO_AWB_OFF,
-    D_ECD_AUTO_AWB_ON,
-    D_ECD_AUTO_BLC_OFF,
-    D_ECD_AUTO_BLC_ON,
-    D_ECD_AUTO_FOCUS_AUTO,
-    D_ECD_AUTO_FOCUS_OFF,
-    D_ECD_AUTO_IRIS_AUTO,
-    D_ECD_AUTO_IRIS_OFF,
-    D_ECS_ADJUST_MG_WB_DELTA,
-    D_ECS_ADJUST_MG_WB_NEW,
-    D_ECS_ADJUST_PHASE_DELTA,
-    D_ECS_ADJUST_PHASE_NEW,
-    D_ECS_ADJUST_RB_WB_DELTA,
-    D_ECS_ADJUST_RB_WB_NEW,
-    D_ECS_CLEAR_AUX_LED,
-    D_ECS_CLEAR_AUX_RELAY,
-    UINT8_MAX,
-    UINT8_SIZE,
     D_C_CAMERA,
     D_C_DOWN,
     D_C_FOCUS_FAR,
@@ -52,6 +31,7 @@ from .constants import (
     D_EC_CLEAR_AUX,
     D_EC_CLEAR_PRESET,
     D_EC_DEVICE_PHASE,
+    D_EC_DUMMY_1,
     D_EC_END_RECORD,
     D_EC_EVEREST,
     D_EC_FOCUS_SPEED,
@@ -80,6 +60,24 @@ from .constants import (
     D_EC_ZONE_START,
     D_EC_ZOOM,
     D_EC_ZOOM_SPEED,
+    D_ECD_AUTO_AGC_AUTO,
+    D_ECD_AUTO_AGC_OFF,
+    D_ECD_AUTO_AWB_OFF,
+    D_ECD_AUTO_AWB_ON,
+    D_ECD_AUTO_BLC_OFF,
+    D_ECD_AUTO_BLC_ON,
+    D_ECD_AUTO_FOCUS_AUTO,
+    D_ECD_AUTO_FOCUS_OFF,
+    D_ECD_AUTO_IRIS_AUTO,
+    D_ECD_AUTO_IRIS_OFF,
+    D_ECS_ADJUST_MG_WB_DELTA,
+    D_ECS_ADJUST_MG_WB_NEW,
+    D_ECS_ADJUST_PHASE_DELTA,
+    D_ECS_ADJUST_PHASE_NEW,
+    D_ECS_ADJUST_RB_WB_DELTA,
+    D_ECS_ADJUST_RB_WB_NEW,
+    D_ECS_CLEAR_AUX_LED,
+    D_ECS_CLEAR_AUX_RELAY,
     D_ECS_SET_AUX_LED,
     D_ECS_SET_AUX_RELAY,
     DEFAULT_ADDRESS,
@@ -107,25 +105,27 @@ from .constants import (
     MIN_TILT_POSITION,
     MIN_VERSION_INFORMATION_MACRO_SUB_OPCODE,
     MIN_ZOOM_POSITION,
+    UINT8_MAX,
+    UINT8_SIZE,
     UNSET,
 )
 from .models import PelcoDCommand
 from .validators import (
     validate_address,
-    validate_aux_id,
-    validate_line_lock_phase_delay,
-    validate_odd,
-    validate_shutter_speed,
-    validate_uint16,
-    validate_uint8,
     validate_all_uint8,
+    validate_aux_id,
     validate_focus_speed,
+    validate_line_lock_phase_delay,
     validate_not_all,
+    validate_odd,
     validate_pan_speed,
     validate_pattern_id,
     validate_preset_id,
     validate_screen_column,
+    validate_shutter_speed,
     validate_tilt_speed,
+    validate_uint8,
+    validate_uint16,
     validate_white_balance_mg,
     validate_white_balance_rb,
     validate_zone_id,
@@ -553,9 +553,7 @@ class PelcoDCommandFactory:
             data=line_lock_phase_delay,
         )
 
-    def adjust_white_balance_rb_new(
-        self, white_balance: int
-    ) -> PelcoDCommand:
+    def adjust_white_balance_rb_new(self, white_balance: int) -> PelcoDCommand:
         validate_white_balance_rb(white_balance)
 
         return self._extended(
@@ -564,9 +562,7 @@ class PelcoDCommandFactory:
             data=white_balance,
         )
 
-    def adjust_white_balance_rb_delta(
-        self, white_balance: int
-    ) -> PelcoDCommand:
+    def adjust_white_balance_rb_delta(self, white_balance: int) -> PelcoDCommand:
         validate_white_balance_rb(white_balance)
 
         return self._extended(
@@ -575,9 +571,7 @@ class PelcoDCommandFactory:
             data=white_balance,
         )
 
-    def adjust_white_balance_mg_new(
-        self, white_balance: int
-    ) -> PelcoDCommand:
+    def adjust_white_balance_mg_new(self, white_balance: int) -> PelcoDCommand:
         validate_white_balance_mg(white_balance)
 
         return self._extended(
@@ -586,9 +580,7 @@ class PelcoDCommandFactory:
             data=white_balance,
         )
 
-    def adjust_white_balance_mg_delta(
-        self, white_balance: int
-    ) -> PelcoDCommand:
+    def adjust_white_balance_mg_delta(self, white_balance: int) -> PelcoDCommand:
         validate_white_balance_mg(white_balance)
 
         return self._extended(

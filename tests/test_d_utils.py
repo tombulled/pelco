@@ -1,7 +1,7 @@
 import pytest
 
-from pelco.d.utils import calculate_checksum, sep_uint16
 from pelco.d.errors import ValidationError
+from pelco.d.utils import calculate_checksum, sep_uint16
 
 
 def test_calculate_checksum() -> None:

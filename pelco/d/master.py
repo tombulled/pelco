@@ -166,14 +166,10 @@ class PelcoD:
         return self.send_command_general_response(self.factory.move_preset(PRESET_ZERO))
 
     def set_auxiliary_relay(self, aux_id: int) -> GeneralResponse:
-        return self.send_command_general_response(
-            self.factory.set_aux_relay(aux_id)
-        )
+        return self.send_command_general_response(self.factory.set_aux_relay(aux_id))
 
     def set_auxiliary_led(self, led: int, rate: int) -> GeneralResponse:
-        return self.send_command_general_response(
-            self.factory.set_aux_led(led, rate)
-        )
+        return self.send_command_general_response(self.factory.set_aux_led(led, rate))
 
     def clear_auxiliary_relay(self, aux_id: int) -> GeneralResponse:
         return self.send_command_general_response(self.factory.clear_aux_relay(aux_id))
@@ -238,36 +234,22 @@ class PelcoD:
         )
 
     def auto_focus(self, on: bool = True) -> GeneralResponse:
-        return self.send_command_general_response(
-            self.factory.auto_focus(on)
-        )
+        return self.send_command_general_response(self.factory.auto_focus(on))
 
     def auto_iris(self, enabled: bool = True) -> GeneralResponse:
-        return self.send_command_general_response(
-            self.factory.auto_iris(enabled)
-        )
+        return self.send_command_general_response(self.factory.auto_iris(enabled))
 
     def agc(self, enabled: bool = False) -> GeneralResponse:
         return self.send_command_general_response(self.factory.agc(enabled))
 
-    def blc(
-        self, enabled: bool = False
-    ) -> GeneralResponse:
-        return self.send_command_general_response(
-            self.factory.blc(enabled)
-        )
+    def blc(self, enabled: bool = False) -> GeneralResponse:
+        return self.send_command_general_response(self.factory.blc(enabled))
 
-    def awb(
-        self, enabled: bool = True
-    ) -> GeneralResponse:
-        return self.send_command_general_response(
-            self.factory.awb(enabled)
-        )
+    def awb(self, enabled: bool = True) -> GeneralResponse:
+        return self.send_command_general_response(self.factory.awb(enabled))
 
     def device_phase(self) -> GeneralResponse:
-        return self.send_command_general_response(
-            self.factory.device_phase()
-        )
+        return self.send_command_general_response(self.factory.device_phase())
 
     def set_shutter_speed(self, shutter_speed: int) -> GeneralResponse:
         return self.send_command_general_response(

@@ -1,35 +1,73 @@
 from dataclasses import dataclass, field
-from typing import Iterable, Tuple
+from typing import Iterable, Sequence, Tuple, Union
 
 from .constants import (
-    SYNC,
-    UNSET,
-    D_COMMAND_SYNC,
     D_COMMAND_ADDR,
+    D_COMMAND_CKSM,
     D_COMMAND_CMD1,
     D_COMMAND_CMD2,
     D_COMMAND_DATA1,
     D_COMMAND_DATA2,
-    D_COMMAND_CKSM,
+    D_COMMAND_SYNC,
     D_SEND_COMMAND_LENGTH,
+    DEFAULT_ADDRESS,
+    SYNC,
+    UNSET,
 )
-from .errors import ChecksumError, ResponseError
+from .errors import ResponseError
 from .utils import calculate_checksum
-from .validators import validate_all_uint8
+from .validators import validate_address, validate_all_uint8
 
 
-@dataclass(frozen=True, eq=True)
+@dataclass(unsafe_hash=True, init=False)
 class PelcoDCommand:
-    sync: int = UNSET
-    address: int = UNSET
-    command_1: int = UNSET
-    command_2: int = UNSET
-    data_1: int = UNSET
-    data_2: int = UNSET
-    checksum: int = UNSET
+    sync: int
+    address: int
+    command_1: int
+    command_2: int
+    data_1: int
+    data_2: int
+    checksum: int
+
+    def __init__(
+        self,
+        *,
+        address: int = DEFAULT_ADDRESS,
+        command_1: int = UNSET,
+        command_2: int = UNSET,
+        data_1: int = UNSET,
+        data_2: int = UNSET,
+    ) -> None:
+        validate_all_uint8(
+            address,
+            command_1,
+            command_2,
+            data_1,
+            data_2,
+        )
+        validate_address(address)
+
+        self.sync = SYNC
+        self.address = address
+        self.command_1 = command_1
+        self.command_2 = command_2
+        self.data_1 = data_1
+        self.data_2 = data_2
+        self.checksum = calculate_checksum(
+            (
+                address,
+                command_1,
+                command_2,
+                data_1,
+                data_2,
+            )
+        )
 
     def __iter__(self) -> Iterable[int]:
         return iter(self.as_tuple())
+
+    def __getitem__(self, item: Union[int, slice], /) -> Union[int, Tuple[int, ...]]:
+        return self.as_tuple()[item]
 
     def as_tuple(self) -> Tuple[int, ...]:
         return (
@@ -42,35 +80,39 @@ class PelcoDCommand:
             self.checksum,
         )
 
-    def calculate_checksum(self) -> int:
-        return calculate_checksum(self.as_tuple()[1:-1])
-
     def serialise(self) -> bytearray:
         return bytearray(self.as_tuple())
 
     @classmethod
-    def deserialise(cls, command: bytes, /) -> "PelcoDCommand":
+    def deserialise(cls, command: Sequence[int], /) -> "PelcoDCommand":
         assert len(command) == D_SEND_COMMAND_LENGTH
 
-        model: PelcoDCommand = cls(
-            sync=command[D_COMMAND_SYNC],
-            address=command[D_COMMAND_ADDR],
-            command_1=command[D_COMMAND_CMD1],
-            command_2=command[D_COMMAND_CMD2],
-            data_1=command[D_COMMAND_DATA1],
-            data_2=command[D_COMMAND_DATA2],
-            checksum=command[D_COMMAND_CKSM],
+        sync: int = command[D_COMMAND_SYNC]
+        address: int = command[D_COMMAND_ADDR]
+        command_1 = command[D_COMMAND_CMD1]
+        command_2: int = command[D_COMMAND_CMD2]
+        data_1: int = command[D_COMMAND_DATA1]
+        data_2: int = command[D_COMMAND_DATA2]
+        checksum: int = command[D_COMMAND_CKSM]
+
+        assert sync == SYNC
+        assert checksum == calculate_checksum(
+            (
+                address,
+                command_1,
+                command_2,
+                data_1,
+                data_2,
+            )
         )
 
-        return model
-
-    def validate(self) -> None:
-        validate_all_uint8(*self.as_tuple())
-
-        if self.calculate_checksum() != self.checksum:
-            raise ChecksumError(
-                expected=self.calculate_checksum(), actual=self.checksum
-            )
+        return cls(
+            address=address,
+            command_1=command_1,
+            command_2=command_2,
+            data_1=data_1,
+            data_2=data_2,
+        )
 
 
 # aka. "General Reply"
