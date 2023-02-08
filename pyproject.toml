@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "pelco"
+version = "0.1.0"
+description = "Pelco-D and Pelco-P Protocol Implementations"
+authors = ["Tom Bulled <26026015+tombulled@users.noreply.github.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+typing-extensions = "^4.4.0"
+
+[tool.poetry.group.dev.dependencies]
+mypy = "^0.991"
+black = "^22.10.0"
+pytest = "^7.2.0"
+isort = "^5.10.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
