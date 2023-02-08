@@ -1,7 +1,7 @@
 import pytest
 
-from pelco.d.errors import ValidationError
-from pelco.d.validators import validate_even, validate_odd
+from pelcod.errors import ValidationError
+from pelcod.validators import validate_even, validate_odd
 
 
 def test_validate_odd() -> None:

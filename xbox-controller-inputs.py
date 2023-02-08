@@ -4,9 +4,9 @@ from typing import Callable, Optional, Sequence
 import serial.tools.list_ports
 from loguru import logger
 
-from pelco.d.constants import PRESET_FLIP
-from pelco.d.errors import ResponseError
-from pelco.d.master import PelcoD
+from pelcod.constants import PRESET_FLIP
+from pelcod.errors import ResponseError
+from pelcod.master import PelcoD
 from xboxonecontroller.controller import XBoxOneController
 from xboxonecontroller.enums import Axis, Button, EventType
 

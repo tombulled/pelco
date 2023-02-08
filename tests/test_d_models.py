@@ -1,7 +1,7 @@
 import pytest
 
-from pelco.d.errors import ValidationError
-from pelco.d.models import PelcoDCommand
+from pelcod.errors import ValidationError
+from pelcod.models import PelcoDCommand
 
 
 @pytest.fixture

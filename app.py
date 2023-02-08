@@ -1,9 +1,9 @@
 import serial.tools.list_ports
 
 import pelco
-import pelco.d
+import pelcod
 import pelco.p
-from pelco.d.master import PelcoD
+from pelcod.master import PelcoD
 
 
 def get_device() -> str:

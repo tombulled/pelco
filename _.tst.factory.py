@@ -1,3 +1,3 @@
-from pelco.d.factory import PelcoDCommandFactory
+from pelcod.d.factory import PelcoDCommandFactory
 
 f: PelcoDCommandFactory = PelcoDCommandFactory(address=2)
