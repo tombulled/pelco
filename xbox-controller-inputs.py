@@ -6,7 +6,7 @@ from loguru import logger
 
 from pelcod.constants import PRESET_FLIP
 from pelcod.errors import ResponseError
-from pelcod.master import PelcoD
+from pelcod.main import PelcoD
 from xboxonecontroller.controller import XBoxOneController
 from xboxonecontroller.enums import Axis, Button, EventType
 

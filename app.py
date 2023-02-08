@@ -3,7 +3,7 @@ import serial.tools.list_ports
 import pelco
 import pelcod
 import pelco.p
-from pelcod.master import PelcoD
+from pelcod.main import PelcoD
 
 
 def get_device() -> str:

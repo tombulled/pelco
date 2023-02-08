@@ -1,1 +1,1 @@
-from .master import PelcoD
+from .main import PelcoD
